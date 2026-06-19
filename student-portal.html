@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal – Sri Kakatiya High School</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Style Links -->
+  <link rel="stylesheet" href="assets/css/portal.css">
+</head>
+<body class="portal-body">
+
+  <div class="shell-wrapper">
+    
+    <!-- SIDEBAR -->
+    <aside class="portal-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span>🦅 Student Portal</span>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Collapse Menu">◀</button>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-item">
+          <a class="sidebar-link active" data-tab="profile">
+            <span>👤</span> <span class="menu-text">My Profile</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="notifications">
+            <span>🔔</span> <span class="menu-text">Notifications</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <a class="sidebar-link" id="sidebar-logout-btn" style="color: var(--portal-error);">
+          <span>🚪</span> <span class="menu-text">Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <main class="portal-main">
+      
+      <!-- TOP NAV HEADER -->
+      <header class="portal-header">
+        <div class="header-title" id="page-title-label">Student Profile</div>
+        
+        <div class="header-actions">
+          <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">☀️</button>
+          
+          <div class="user-profile-widget" id="header-user-widget">
+            <img src="" alt="Profile Photo" class="widget-photo" id="header-avatar">
+            <div>
+              <span class="widget-name" id="header-fullname">Loading...</span>
+              <span class="widget-role">Student</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT AREA -->
+      <div class="portal-content">
+        
+        <!-- Alert Box -->
+        <div id="dashboard-alert-container"></div>
+
+        <!-- 1. PROFILE SECTION -->
+        <section id="tab-profile" class="tab-view">
+          <div class="dashboard-title-group" style="margin-bottom: 2rem;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem;">Account Profile</h2>
+            <p style="color: var(--portal-text-muted); font-size: 0.9rem;">View completion details and configure personal preferences.</p>
+          </div>
+
+          <!-- Profile Completion Tracking Gauge -->
+          <div class="completion-container">
+            <div class="completion-gauge-wrap">
+              <svg width="70" height="70">
+                <circle class="circle-bg" cx="35" cy="35" r="31"></circle>
+                <circle class="circle-progress" id="profile-gauge-circle" cx="35" cy="35" r="31"></circle>
+              </svg>
+              <div class="completion-percent" id="profile-gauge-text">0%</div>
+            </div>
+            
+            <div class="completion-details">
+              <h4 class="completion-heading">Profile Completion Tracker</h4>
+              <p class="completion-text" id="profile-gauge-desc">Complete your profile setup by finishing all requirements.</p>
+              
+              <div class="checklist-grid">
+                <div class="checklist-item" id="check-photo">
+                  <span class="status-icon">❌</span> Profile Photo Uploaded (25%)
+                </div>
+                <div class="checklist-item" id="check-contact">
+                  <span class="status-icon">❌</span> Mobile Number Saved (25%)
+                </div>
+                <div class="checklist-item" id="check-password">
+                  <span class="status-icon">❌</span> Password Updated (25%)
+                </div>
+                <div class="checklist-item" id="check-active">
+                  <span class="status-icon">❌</span> Email Activated (25%)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Details editor -->
+            <div class="portal-card">
+              <h3 class="card-title">Personal Settings</h3>
+              
+              <form id="profile-details-form">
+                <div class="form-group">
+                  <label class="form-label" for="profile-name">Full Name</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="profile-name" class="form-input" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profile-email">Login Email (Read-only)</label>
+                  <div class="input-wrapper">
+                    <input type="email" id="profile-email" class="form-input" readonly style="opacity: 0.65; cursor: not-allowed;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profile-phone">Mobile Number</label>
+                  <div class="input-wrapper">
+                    <input type="tel" id="profile-phone" class="form-input" required>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-portal" id="save-profile-btn" style="max-width: 200px;">Save Profile</button>
+              </form>
+            </div>
+
+            <!-- Profile Photo Upload -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+              <div class="portal-card">
+                <h3 class="card-title">Profile Image</h3>
+                <div class="profile-photo-uploader">
+                  <img src="" alt="Avatar" class="profile-avatar-large" id="profile-avatar-preview">
+                  <label class="upload-btn-label">
+                    <span>Choose Photo File</span>
+                    <input type="file" id="photo-file-input" class="hidden-file-input" accept="image/*">
+                  </label>
+                  <p style="font-size: 0.75rem; color: var(--portal-text-muted);">Supports PNG, JPG (Max 1MB). Image is stored locally.</p>
+                </div>
+              </div>
+
+              <!-- Security Password Update -->
+              <div class="portal-card">
+                <h3 class="card-title">Security & Credentials</h3>
+                <form id="profile-password-form">
+                  <div class="form-group">
+                    <label class="form-label" for="pwd-old">Current Password</label>
+                    <div class="input-wrapper">
+                      <input type="password" id="pwd-old" class="form-input" placeholder="••••••••" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="pwd-new">New Password</label>
+                    <div class="input-wrapper">
+                      <input type="password" id="pwd-new" class="form-input" placeholder="Min 8 characters" required>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn-portal" id="change-pwd-btn" style="background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Update Password</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. NOTIFICATIONS SECTION -->
+        <section id="tab-notifications" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 2rem;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem;">Circulars & Announcements</h2>
+            <p style="color: var(--portal-text-muted); font-size: 0.9rem;">View recent school broadcast alerts and important circular notifications.</p>
+          </div>
+
+          <div class="portal-card">
+            <h3 class="card-title">My Notifications</h3>
+            <div class="notifications-feed" id="notifications-feed-list">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- DB & Auth APIs -->
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+
+  <!-- Dashboard script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Guard Check
+      if (!window.skhs_auth.requirePermission('STUDENT_VIEWS')) return;
+
+      // Theme toggle initialization
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlEl = document.documentElement;
+
+      if (localStorage.getItem('portal_theme') === 'dark') {
+        htmlEl.classList.add('dark-theme');
+        themeToggle.textContent = '🌙';
+      } else {
+        htmlEl.classList.remove('dark-theme');
+        themeToggle.textContent = '☀️';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const isDark = htmlEl.classList.toggle('dark-theme');
+        localStorage.setItem('portal_theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? '🌙' : '☀️';
+      });
+
+      // Sidebar Collapsible
+      const sidebar = document.getElementById('sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      sidebarToggle.addEventListener('click', () => {
+        const isCollapsed = sidebar.classList.toggle('collapsed');
+        sidebarToggle.textContent = isCollapsed ? '▶' : '◀';
+      });
+
+      // Sidebar Menu switching
+      const menuLinks = document.querySelectorAll('.sidebar-link[data-tab]');
+      const tabViews = document.querySelectorAll('.tab-view');
+      const pageTitleLabel = document.getElementById('page-title-label');
+
+      menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetTab = link.getAttribute('data-tab');
+          
+          menuLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+
+          tabViews.forEach(v => v.style.display = 'none');
+          document.getElementById('tab-' + targetTab).style.display = 'block';
+
+          // Update header title
+          const titleMap = {
+            'profile': 'Student Profile',
+            'notifications': 'Circulars & Alerts'
+          };
+          pageTitleLabel.textContent = titleMap[targetTab] || 'Dashboard';
+          
+          if (targetTab === 'notifications') {
+            loadNotifications();
+          }
+        });
+      });
+
+      // User session load
+      let currentUser = window.skhs_auth.getCurrentUser();
+      
+      function renderUserData() {
+        if (!currentUser) return;
+        
+        // Header widget
+        document.getElementById('header-fullname').textContent = currentUser.fullName;
+        
+        const avatarSrc = window.skhs_security.isAllowedImageDataUrl(currentUser.profilePhoto)
+          ? currentUser.profilePhoto
+          : 'assets/images/logo.svg';
+        document.getElementById('header-avatar').src = avatarSrc;
+        document.getElementById('profile-avatar-preview').src = avatarSrc;
+
+        // Details Form
+        document.getElementById('profile-name').value = currentUser.fullName || '';
+        document.getElementById('profile-email').value = currentUser.email || '';
+        document.getElementById('profile-phone').value = currentUser.mobileNumber || '';
+
+        // Update Gauge
+        updateProfileGauge();
+      }
+
+      function updateProfileGauge() {
+        const percentage = window.skhs_db.calculateCompletion(currentUser);
+        
+        // Gauge visual
+        document.getElementById('profile-gauge-text').textContent = percentage + '%';
+        const circle = document.getElementById('profile-gauge-circle');
+        const circumference = 195;
+        const offset = circumference - (percentage / 100) * circumference;
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = offset;
+
+        // Checklist states
+        const checkPhoto = document.getElementById('check-photo');
+        const checkContact = document.getElementById('check-contact');
+        const checkPassword = document.getElementById('check-password');
+        const checkActive = document.getElementById('check-active');
+
+        if (currentUser.profilePhoto) {
+          checkPhoto.classList.add('done');
+          checkPhoto.querySelector('.status-icon').textContent = '✅';
+        } else {
+          checkPhoto.classList.remove('done');
+          checkPhoto.querySelector('.status-icon').textContent = '❌';
+        }
+
+        if (currentUser.mobileNumber) {
+          checkContact.classList.add('done');
+          checkContact.querySelector('.status-icon').textContent = '✅';
+        } else {
+          checkContact.classList.remove('done');
+          checkContact.querySelector('.status-icon').textContent = '❌';
+        }
+
+        if (!currentUser.isDefaultPassword) {
+          checkPassword.classList.add('done');
+          checkPassword.querySelector('.status-icon').textContent = '✅';
+        } else {
+          checkPassword.classList.remove('done');
+          checkPassword.querySelector('.status-icon').textContent = '❌';
+        }
+
+        if (currentUser.accountActive) {
+          checkActive.classList.add('done');
+          checkActive.querySelector('.status-icon').textContent = '✅';
+        } else {
+          checkActive.classList.remove('done');
+          checkActive.querySelector('.status-icon').textContent = '❌';
+        }
+
+        const desc = document.getElementById('profile-gauge-desc');
+        if (percentage === 100) {
+          desc.textContent = "Excellent! Your portal profile has been fully secured and verified.";
+        } else {
+          desc.textContent = `Finish the checklist below to complete profile settings (Current: ${percentage}%).`;
+        }
+      }
+
+      // Alert display
+      const alertContainer = document.getElementById('dashboard-alert-container');
+      function showAlert(message, type = 'success') {
+        window.skhs_dom.showAlert(alertContainer, message, type, 4000);
+      }
+
+      // Details update
+      document.getElementById('profile-details-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('profile-name').value.trim();
+        const phone = document.getElementById('profile-phone').value.trim();
+
+        const res = window.skhs_auth.updateProfile(currentUser.userId, name, phone, null);
+        if (res.success) {
+          currentUser = res.user;
+          renderUserData();
+          showAlert("Contact details updated successfully!", "success");
+        } else {
+          showAlert(res.message, "error");
+        }
+      });
+
+      // Photo upload conversion to base64
+      document.getElementById('photo-file-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!window.skhs_security.isAllowedImageFile(file)) {
+          showAlert("Choose a PNG, JPG, WebP, or GIF image under 1MB.", "error");
+          e.target.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const base64Image = evt.target.result;
+          const res = window.skhs_auth.updateProfile(currentUser.userId, null, null, base64Image);
+          if (res.success) {
+            currentUser = res.user;
+            renderUserData();
+            showAlert("Profile picture updated successfully!", "success");
+          } else {
+            showAlert(res.message, "error");
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Password modification
+      document.getElementById('profile-password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const oldP = document.getElementById('pwd-old').value;
+        const newP = document.getElementById('pwd-new').value;
+
+        const res = await window.skhs_auth.changePassword(currentUser.userId, oldP, newP);
+        if (res.success) {
+          currentUser = window.skhs_auth.getCurrentUser();
+          renderUserData();
+          document.getElementById('profile-password-form').reset();
+          showAlert("Account security credentials updated!", "success");
+        } else {
+          showAlert(res.message, "error");
+        }
+      });
+
+      // Notifications Feed Renderer
+      function loadNotifications() {
+        const feedList = document.getElementById('notifications-feed-list');
+        const ntfs = window.skhs_db.find('notifications', 'userId', currentUser.userId);
+
+        ntfs.sort((a, b) => b.createdAt - a.createdAt);
+        window.skhs_dom.renderNotifications(feedList, ntfs, markNotificationRead);
+      }
+
+      function markNotificationRead(id) {
+        const notification = window.skhs_db.findOne('notifications', 'notificationId', id);
+        if (!notification || notification.userId !== currentUser.userId) return;
+        window.skhs_db.update('notifications', 'notificationId', id, { isRead: true });
+        loadNotifications();
+      }
+
+      // Logout trigger
+      document.getElementById('sidebar-logout-btn').addEventListener('click', () => {
+        window.skhs_auth.logout();
+      });
+
+      // Initial page draw
+      renderUserData();
+    });
+  </script>
+</body>
+</html>

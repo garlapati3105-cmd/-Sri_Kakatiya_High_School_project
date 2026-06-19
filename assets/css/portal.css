@@ -1,0 +1,897 @@
+/* ============================================================
+//  Sri Kakatiya School Management Platform – portal.css
+//  Cohesive styling system for Portal Login & Shells
+// ============================================================ */
+
+/* ── CSS Custom Properties & Themes ────────────────────────── */
+:root {
+  /* Common Core Colors */
+  --portal-primary:       #0a2d6e;
+  --portal-primary-light: #1a4fa8;
+  --portal-primary-dark:  #061c47;
+  --portal-accent:        #f5a623;
+  --portal-accent-light:  #ffc85e;
+  --portal-accent-dark:   #c7841a;
+  
+  /* Status Colors */
+  --portal-success:       #10b981;
+  --portal-warning:       #f59e0b;
+  --portal-error:         #ef4444;
+  --portal-info:          #3b82f6;
+
+  /* Theme Defaults (Light Theme) */
+  --portal-bg:            #f3f4f6;
+  --portal-card-bg:       #ffffff;
+  --portal-sidebar-bg:    #0a2d6e;
+  --portal-sidebar-text:  #e2e8f0;
+  --portal-text-main:     #111827;
+  --portal-text-muted:    #4b5563;
+  --portal-border:        #e5e7eb;
+  --portal-input-bg:      #f9fafb;
+  --portal-input-border:  #d1d5db;
+  --portal-active-item:   rgba(255, 255, 255, 0.1);
+  --portal-active-text:   #ffffff;
+  --portal-shadow:        0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --portal-shadow-hover:  0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark Theme Variables */
+.dark-theme {
+  --portal-bg:            #0b0f19;
+  --portal-card-bg:       #151c2c;
+  --portal-sidebar-bg:    #0d1322;
+  --portal-sidebar-text:  #94a3b8;
+  --portal-text-main:     #f3f4f6;
+  --portal-text-muted:    #94a3b8;
+  --portal-border:        #1e293b;
+  --portal-input-bg:      #1f2937;
+  --portal-input-border:  #374151;
+  --portal-active-item:   rgba(255, 255, 255, 0.07);
+  --portal-active-text:   #ffffff;
+  --portal-shadow:        0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --portal-shadow-hover:  0 25px 30px -5px rgba(0, 0, 0, 0.4), 0 12px 12px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Base Reset & Animations ───────────────────────────────── */
+.portal-body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--portal-bg);
+  color: var(--portal-text-main);
+  min-height: 100vh;
+  margin: 0;
+  transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ── Portal Login Styling ──────────────────────────────────── */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 2rem 1rem;
+  background: radial-gradient(circle at 10% 20%, rgba(10, 45, 110, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(245, 166, 35, 0.08) 0%, transparent 40%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--portal-card-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: var(--portal-shadow);
+  position: relative;
+  z-index: 10;
+  animation: slideInUp 0.5s ease-out;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--portal-primary-light);
+  margin-bottom: 0.25rem;
+}
+.dark-theme .login-title {
+  color: var(--portal-accent-light);
+}
+
+.login-subtitle {
+  color: var(--portal-text-muted);
+  font-size: 0.95rem;
+}
+
+/* Role Selection Grid */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: var(--portal-bg);
+  padding: 0.35rem;
+  border-radius: 10px;
+  border: 1px solid var(--portal-border);
+}
+
+.role-btn {
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--portal-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.role-btn.active {
+  background: var(--portal-card-bg);
+  color: var(--portal-primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.dark-theme .role-btn.active {
+  color: var(--portal-accent-light);
+  background: var(--portal-input-bg);
+}
+
+/* Inputs & Form Controls */
+.form-group {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--portal-text-main);
+  margin-bottom: 0.4rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--portal-input-bg);
+  border: 1px solid var(--portal-input-border);
+  border-radius: 10px;
+  color: var(--portal-text-main);
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--portal-primary-light);
+  box-shadow: 0 0 0 3px rgba(26, 79, 168, 0.15);
+}
+.dark-theme .form-input:focus {
+  border-color: var(--portal-accent-light);
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.15);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--portal-text-muted);
+}
+
+/* Remember & Forgot Row */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.forgot-link {
+  color: var(--portal-primary-light);
+  font-weight: 600;
+  cursor: pointer;
+}
+.dark-theme .forgot-link {
+  color: var(--portal-accent-light);
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Action Button */
+.btn-portal {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--portal-primary) 0%, var(--portal-primary-light) 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(10, 45, 110, 0.2);
+}
+
+.btn-portal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(10, 45, 110, 0.3);
+}
+
+.btn-portal:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner Loader */
+.spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Alerts and Messages */
+.portal-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  animation: fadeIn 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+.portal-alert-error {
+  background-color: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--portal-error);
+}
+
+.portal-alert-success {
+  background-color: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--portal-success);
+}
+
+.portal-alert-info {
+  background-color: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--portal-info);
+}
+
+/* Test Accounts panel */
+.demo-accounts-panel {
+  margin-top: 2rem;
+  background: var(--portal-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.demo-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--portal-text-main);
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.demo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  background: var(--portal-card-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.demo-row:hover {
+  transform: scale(1.02);
+  background: rgba(10, 45, 110, 0.05);
+}
+.dark-theme .demo-row:hover {
+  background: rgba(245, 166, 35, 0.05);
+}
+
+.demo-role {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.demo-credentials {
+  font-family: monospace;
+  color: var(--portal-text-muted);
+}
+
+/* ── Portal Shell & Sidebars ───────────────────────────────── */
+.shell-wrapper {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Collapsible Sidebar */
+.portal-sidebar {
+  width: 260px;
+  background: var(--portal-sidebar-bg);
+  color: var(--portal-sidebar-text);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.portal-sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar-header {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-toggle-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 1.5rem 0.75rem;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.sidebar-item {
+  margin-bottom: 0.4rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  color: var(--portal-sidebar-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebar-link:hover {
+  background: var(--portal-active-item);
+  color: var(--portal-active-text);
+}
+
+.sidebar-link.active {
+  background: var(--portal-accent);
+  color: var(--portal-primary-dark);
+  font-weight: 600;
+}
+.dark-theme .sidebar-link.active {
+  background: var(--portal-accent);
+  color: var(--portal-primary-dark);
+}
+
+.sidebar-link span.menu-text {
+  transition: opacity 0.2s ease;
+}
+
+.portal-sidebar.collapsed .sidebar-link span.menu-text {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+  display: none;
+}
+
+.portal-sidebar.collapsed .sidebar-logo span {
+  display: none;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Content Layout ────────────────────────────────────────── */
+.portal-main {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.portal-sidebar.collapsed + .portal-main {
+  margin-left: 70px;
+}
+
+/* Portal Header */
+.portal-header {
+  height: 70px;
+  background: var(--portal-card-bg);
+  border-bottom: 1px solid var(--portal-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.theme-toggle-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--portal-text-main);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--portal-bg);
+}
+
+.user-profile-widget {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.widget-photo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--portal-border);
+  background: var(--portal-bg);
+}
+
+.widget-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.widget-role {
+  font-size: 0.75rem;
+  color: var(--portal-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+/* Page Body Context */
+.portal-content {
+  padding: 2rem;
+  flex: 1;
+}
+
+.portal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .portal-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .portal-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .portal-grid-main-side {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Cards */
+.portal-card {
+  background: var(--portal-card-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--portal-shadow);
+  transition: all 0.3s ease;
+}
+
+.portal-card:hover {
+  box-shadow: var(--portal-shadow-hover);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Profile Completion Tracking Gauge ─────────────────────── */
+.completion-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(10, 45, 110, 0.04) 0%, rgba(245, 166, 35, 0.04) 100%);
+  border: 1px dashed var(--portal-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.completion-gauge-wrap {
+  position: relative;
+  width: 70px;
+  height: 70px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: var(--portal-border);
+  stroke-width: 5;
+}
+
+.circle-progress {
+  fill: none;
+  stroke: var(--portal-primary-light);
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.6s ease;
+}
+.dark-theme .circle-progress {
+  stroke: var(--portal-accent);
+}
+
+.completion-percent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.completion-details {
+  flex: 1;
+}
+
+.completion-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.completion-text {
+  font-size: 0.8rem;
+  color: var(--portal-text-muted);
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.checklist-item.done {
+  color: var(--portal-success);
+}
+.checklist-item.pending {
+  color: var(--portal-text-muted);
+}
+
+/* ── Profile Configuration Screen ──────────────────────────── */
+.profile-photo-uploader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--portal-border);
+  box-shadow: var(--portal-shadow);
+  background: var(--portal-bg);
+}
+
+.upload-btn-label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--portal-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-btn-label:hover {
+  background: var(--portal-border);
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+/* ── Notifications Panel ───────────────────────────────────── */
+.notifications-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.notification-card {
+  padding: 1rem;
+  background: var(--portal-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.notification-card.unread {
+  border-left: 4px solid var(--portal-primary-light);
+  background: var(--portal-card-bg);
+}
+.dark-theme .notification-card.unread {
+  border-left-color: var(--portal-accent);
+}
+
+.notification-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.notification-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.notification-card-time {
+  font-size: 0.7rem;
+  color: var(--portal-text-muted);
+}
+
+.notification-card-body {
+  font-size: 0.8rem;
+  color: var(--portal-text-muted);
+}
+
+.notification-mark-read-btn {
+  background: transparent;
+  border: none;
+  color: var(--portal-primary-light);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.dark-theme .notification-mark-read-btn {
+  color: var(--portal-accent-light);
+}
+
+/* ── Audit Logs Viewer ─────────────────────────────────────── */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--portal-border);
+}
+
+.portal-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.portal-table th {
+  background: var(--portal-bg);
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.portal-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--portal-border);
+  color: var(--portal-text-muted);
+}
+
+.portal-table tr:last-child td {
+  border-bottom: none;
+}
+
+.portal-table tr:hover td {
+  background: rgba(10, 45, 110, 0.02);
+}
+.dark-theme .portal-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-info {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--portal-info);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--portal-warning);
+}
+
+.badge-critical {
+  background: rgba(239, 104, 104, 0.15);
+  color: var(--portal-error);
+}
+
+/* Responsive sidebars for tablets and phones */
+@media (max-width: 768px) {
+  .portal-sidebar {
+    transform: translateX(-100%);
+  }
+  .portal-sidebar.open {
+    transform: translateX(0);
+  }
+  .portal-main {
+    margin-left: 0 !important;
+  }
+  .sidebar-header {
+    justify-content: flex-end;
+  }
+  .sidebar-logo {
+    margin-right: auto;
+  }
+}

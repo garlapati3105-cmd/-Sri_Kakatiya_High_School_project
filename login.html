@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Login – Sri Kakatiya High School</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Style Links -->
+  <link rel="stylesheet" href="assets/css/portal.css">
+  
+  <style>
+    /* Custom additional tweaks for login page context */
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--portal-text-muted);
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .back-home:hover {
+      color: var(--portal-primary-light);
+    }
+    .dark-theme .back-home:hover {
+      color: var(--portal-accent-light);
+    }
+    .theme-toggle-login {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+    }
+  </style>
+</head>
+<body class="portal-body login-wrapper">
+
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle-btn theme-toggle-login" id="theme-toggle" aria-label="Toggle theme">☀️</button>
+
+  <div class="login-card">
+    
+    <!-- Navigation Back -->
+    <div class="back-home" id="back-home-btn">
+      <span>&larr;</span> Back to Homepage
+    </div>
+
+    <!-- Header info -->
+    <div class="login-header">
+      <div class="login-logo">🦅</div>
+      <h1 class="login-title">Sri Kakatiya</h1>
+      <p class="login-subtitle">School Management Platform</p>
+    </div>
+
+    <!-- Alert Containers -->
+    <div id="alert-container"></div>
+
+    <!-- Form Views -->
+    
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-view">
+      <!-- Role Tabs -->
+      <div class="role-grid">
+        <button class="role-btn active" data-role="admin">Admin</button>
+        <button class="role-btn" data-role="teacher">Teacher</button>
+        <button class="role-btn" data-role="parent">Parent</button>
+        <button class="role-btn" data-role="student">Student</button>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Login Email</label>
+          <div class="input-wrapper">
+            <input type="email" id="login-email" class="form-input" placeholder="name@srikakatiya.com" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="login-password" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="remember-label">
+            <input type="checkbox" id="login-remember"> Remember Me
+          </label>
+          <span class="forgot-link" id="go-forgot-btn">Forgot Password?</span>
+        </div>
+
+        <button type="submit" class="btn-portal" id="login-submit-btn">
+          <span>Sign In</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 2. FORGOT PASSWORD REQUEST SCREEN -->
+    <div id="forgot-view" style="display: none;">
+      <h3 class="card-title">Password Recovery</h3>
+      <p style="font-size: 0.85rem; color: var(--portal-text-muted); margin-bottom: 1.5rem;">
+        Enter your registered email below. We'll generate a recovery token to verify your identity.
+      </p>
+
+      <form id="forgot-form">
+        <div class="form-group">
+          <label class="form-label" for="forgot-email">Account Email</label>
+          <div class="input-wrapper">
+            <input type="email" id="forgot-email" class="form-input" placeholder="your-email@srikakatiya.com" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none; flex: 1;" id="back-login-btn1">Cancel</button>
+          <button type="submit" class="btn-portal" style="flex: 2;" id="forgot-submit-btn">Send Recovery Code</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 3. PASSWORD RESET CODE & NEW PASSWORD SCREEN -->
+    <div id="reset-view" style="display: none;">
+      <h3 class="card-title">Update Your Password</h3>
+      <p style="font-size: 0.85rem; color: var(--portal-text-muted); margin-bottom: 1.5rem;">
+        Provide the token generated for your email and set your new login password.
+      </p>
+
+      <!-- Simulated email notification info box -->
+      <div class="portal-alert portal-alert-info" id="smtp-sim-box" style="margin-bottom: 1.25rem;">
+        <span style="font-size: 1.1rem;">✉️</span>
+        <div>
+          <strong>[Simulated SMTP Delivery]</strong><br>
+          Token dispatched to email: <strong id="smtp-email"></strong><br>
+          Verification Token: <span id="smtp-token" style="font-family: monospace; font-size: 0.95rem; font-weight: 700; background: rgba(0,0,0,0.1); padding: 0.1rem 0.3rem; border-radius: 4px;"></span>
+        </div>
+      </div>
+
+      <form id="reset-form">
+        <div class="form-group">
+          <label class="form-label" for="reset-code">Verification Token</label>
+          <div class="input-wrapper">
+            <input type="text" id="reset-code" class="form-input" placeholder="Enter 6-digit code" required autocomplete="off">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reset-password">New Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="reset-password" class="form-input" placeholder="Min. 8 characters" autocomplete="new-password" required>
+            <button type="button" class="password-toggle" id="password-toggle-reset" aria-label="Show password">👁️</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button type="button" class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none; flex: 1;" id="back-login-btn2">Cancel</button>
+          <button type="submit" class="btn-portal" style="flex: 2;" id="reset-submit-btn">Reset Password</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- DB & Auth APIs -->
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+
+  <!-- Login page dynamic logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      // Check if user is already logged in
+      const session = sessionStorage.getItem("skhs_active_session") || localStorage.getItem("skhs_active_session");
+      if (session) {
+        const user = window.skhs_auth.getCurrentUser();
+        if (user) {
+          // Redirect to their route
+          const ROUTE_CONFIG = {
+            'admin':   'admin-dashboard.html',
+            'teacher': 'teacher-portal.html',
+            'parent':  'parent-portal.html',
+            'student': 'student-portal.html'
+          };
+          window.location.href = ROUTE_CONFIG[user.role];
+        }
+      }
+
+      // Theme toggle initialization
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlEl = document.documentElement;
+
+      if (localStorage.getItem('portal_theme') === 'dark') {
+        htmlEl.classList.add('dark-theme');
+        themeToggle.textContent = '🌙';
+      } else {
+        htmlEl.classList.remove('dark-theme');
+        themeToggle.textContent = '☀️';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const isDark = htmlEl.classList.toggle('dark-theme');
+        localStorage.setItem('portal_theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? '🌙' : '☀️';
+      });
+
+      // Navigation Homepage Link
+      document.getElementById('back-home-btn').addEventListener('click', () => {
+        window.location.href = "index.html";
+      });
+
+      // Role Tabs clicking
+      const roleBtns = document.querySelectorAll('.role-btn');
+      let activeRole = 'admin';
+
+      roleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          roleBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeRole = btn.getAttribute('data-role');
+        });
+      });
+
+      // Password Toggles
+      const togglePwdBtn = document.getElementById('password-toggle');
+      const pwdInput = document.getElementById('login-password');
+      
+      if (togglePwdBtn && pwdInput) {
+        togglePwdBtn.addEventListener('click', () => {
+          const type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          pwdInput.setAttribute('type', type);
+          togglePwdBtn.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+      }
+
+      const togglePwdResetBtn = document.getElementById('password-toggle-reset');
+      const resetPwdInput = document.getElementById('reset-password');
+
+      if (togglePwdResetBtn && resetPwdInput) {
+        togglePwdResetBtn.addEventListener('click', () => {
+          const type = resetPwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          resetPwdInput.setAttribute('type', type);
+          togglePwdResetBtn.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+      }
+
+      // Alert helper
+      const alertContainer = document.getElementById('alert-container');
+      function showAlert(message, type = 'error') {
+        window.skhs_dom.showAlert(alertContainer, message, type, 0);
+        // Scroll to alerts
+        alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      function clearAlert() {
+        alertContainer.replaceChildren();
+      }
+
+      // Views toggles
+      const loginView = document.getElementById('login-view');
+      const forgotView = document.getElementById('forgot-view');
+      const resetView = document.getElementById('reset-view');
+
+      document.getElementById('go-forgot-btn').addEventListener('click', () => {
+        loginView.style.display = 'none';
+        forgotView.style.display = 'block';
+        resetView.style.display = 'none';
+        clearAlert();
+      });
+
+      document.getElementById('back-login-btn1').addEventListener('click', () => {
+        loginView.style.display = 'block';
+        forgotView.style.display = 'none';
+        resetView.style.display = 'none';
+        clearAlert();
+      });
+
+      document.getElementById('back-login-btn2').addEventListener('click', () => {
+        loginView.style.display = 'block';
+        forgotView.style.display = 'none';
+        resetView.style.display = 'none';
+        clearAlert();
+      });
+
+      // Submit Login Form
+      const loginForm = document.getElementById('login-form');
+      const loginSubmitBtn = document.getElementById('login-submit-btn');
+
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlert();
+
+        const email = document.getElementById('login-email').value.trim();
+        const pwd = document.getElementById('login-password').value;
+        const remember = document.getElementById('login-remember').checked;
+
+        // Set loading state
+        loginSubmitBtn.disabled = true;
+        loginSubmitBtn.innerHTML = `<span class="spinner"></span> <span>Verifying...</span>`;
+
+        try {
+          const res = await window.skhs_auth.login(email, pwd, remember, activeRole);
+          if (res.success) {
+            showAlert("Login successful! Redirecting...", "success");
+            setTimeout(() => {
+              window.location.href = res.redirect;
+            }, 1000);
+          } else {
+            showAlert(res.message, "error");
+            loginSubmitBtn.disabled = false;
+            loginSubmitBtn.innerHTML = `<span>Sign In</span>`;
+          }
+        } catch (err) {
+          console.error(err);
+          showAlert("An error occurred during authentication. Check console.", "error");
+          loginSubmitBtn.disabled = false;
+          loginSubmitBtn.innerHTML = `<span>Sign In</span>`;
+        }
+      });
+
+      // Submit Forgot Password Request Form
+      const forgotForm = document.getElementById('forgot-form');
+      const forgotSubmitBtn = document.getElementById('forgot-submit-btn');
+      let resetEmailRef = "";
+
+      forgotForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearAlert();
+
+        const email = document.getElementById('forgot-email').value.trim();
+        forgotSubmitBtn.disabled = true;
+        forgotSubmitBtn.innerHTML = `<span class="spinner"></span> <span>Generating Code...</span>`;
+
+        setTimeout(() => {
+          const res = window.skhs_auth.forgotPasswordRequest(email);
+          forgotSubmitBtn.disabled = false;
+          forgotSubmitBtn.innerHTML = `<span>Send Recovery Code</span>`;
+
+          if (res.success) {
+            resetEmailRef = email;
+            
+            // Pop the tokens view
+            forgotView.style.display = 'none';
+            resetView.style.display = 'block';
+            
+            // Inject values in sim tray
+            document.getElementById('smtp-email').textContent = email;
+            document.getElementById('smtp-token').textContent = res.token;
+            
+            showAlert("Verification token generated. Please check simulated SMTP tray below.", "success");
+          } else {
+            showAlert(res.message, "error");
+          }
+        }, 800);
+      });
+
+      // Submit Reset Password Action Form
+      const resetForm = document.getElementById('reset-form');
+      const resetSubmitBtn = document.getElementById('reset-submit-btn');
+
+      resetForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlert();
+
+        const code = document.getElementById('reset-code').value.trim();
+        const newPwd = document.getElementById('reset-password').value;
+
+        resetSubmitBtn.disabled = true;
+        resetSubmitBtn.innerHTML = `<span class="spinner"></span> <span>Updating...</span>`;
+
+        try {
+          const res = await window.skhs_auth.resetPasswordUpdate(resetEmailRef, code, newPwd);
+          resetSubmitBtn.disabled = false;
+          resetSubmitBtn.innerHTML = `<span>Reset Password</span>`;
+
+          if (res.success) {
+            showAlert("Password reset successfully! Log in using your new password.", "success");
+            setTimeout(() => {
+              loginView.style.display = 'block';
+              forgotView.style.display = 'none';
+              resetView.style.display = 'none';
+              document.getElementById('login-password').value = '';
+              clearAlert();
+            }, 2000);
+          } else {
+            showAlert(res.message, "error");
+          }
+        } catch (err) {
+          console.error(err);
+          showAlert("Error updating password.", "error");
+          resetSubmitBtn.disabled = false;
+          resetSubmitBtn.innerHTML = `<span>Reset Password</span>`;
+        }
+      });
+
+    });
+  </script>
+</body>
+</html>
