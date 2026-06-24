@@ -100,6 +100,44 @@
           <span>Sign In</span>
         </button>
       </form>
+
+      <div class="demo-accounts-panel" style="max-height: 320px; overflow-y: auto; padding-right: 0.5rem;">
+        <div class="demo-title">🔑 Quick Reference Accounts (Click to Autofill)</div>
+        <div class="demo-grid">
+          <!-- Admins -->
+          <div class="demo-row" onclick="document.getElementById('login-email').value='admin@srikakatiya.com'; document.getElementById('login-password').value='School@123'; document.querySelector('.role-btn[data-role=admin]').click();" style="border-left: 3px solid var(--portal-warning);">
+            <div><span class="demo-role" style="color:var(--portal-warning);">Admin</span> <span style="font-weight:600;">(Swathi Reddy)</span></div>
+            <span class="demo-credentials">admin@srikakatiya.com / School@123</span>
+          </div>
+          <!-- Teachers -->
+          <div class="demo-row" onclick="document.getElementById('login-email').value='teacher@srikakatiya.com'; document.getElementById('login-password').value='School@456'; document.querySelector('.role-btn[data-role=teacher]').click();" style="border-left: 3px solid var(--portal-info);">
+            <div><span class="demo-role" style="color:var(--portal-info);">Teacher</span> <span style="font-weight:600;">(K. Raghupathi)</span></div>
+            <span class="demo-credentials">teacher@srikakatiya.com / School@456</span>
+          </div>
+          <div class="demo-row" onclick="document.getElementById('login-email').value='lakshmi.g@srikakatiya.com'; document.getElementById('login-password').value='School@456'; document.querySelector('.role-btn[data-role=teacher]').click();" style="border-left: 3px solid var(--portal-info);">
+            <div><span class="demo-role" style="color:var(--portal-info);">Teacher</span> <span style="font-weight:600;">(Smt. G. Lakshmi)</span></div>
+            <span class="demo-credentials">lakshmi.g@srikakatiya.com / School@456</span>
+          </div>
+          <!-- Parents -->
+          <div class="demo-row" onclick="document.getElementById('login-email').value='parent@srikakatiya.com'; document.getElementById('login-password').value='School@789'; document.querySelector('.role-btn[data-role=parent]').click();" style="border-left: 3px solid #8b5cf6;">
+            <div><span class="demo-role" style="color:#8b5cf6;">Parent</span> <span style="font-weight:600;">(Madhusudhan Rao)</span></div>
+            <span class="demo-credentials">parent@srikakatiya.com / School@789</span>
+          </div>
+          <div class="demo-row" onclick="document.getElementById('login-email').value='ramanappa@gmail.com'; document.getElementById('login-password').value='School@789'; document.querySelector('.role-btn[data-role=parent]').click();" style="border-left: 3px solid #8b5cf6;">
+            <div><span class="demo-role" style="color:#8b5cf6;">Parent</span> <span style="font-weight:600;">(Venkata Ramanappa)</span></div>
+            <span class="demo-credentials">ramanappa@gmail.com / School@789</span>
+          </div>
+          <!-- Students -->
+          <div class="demo-row" onclick="document.getElementById('login-email').value='student@srikakatiya.com'; document.getElementById('login-password').value='School@321'; document.querySelector('.role-btn[data-role=student]').click();" style="border-left: 3px solid var(--portal-success);">
+            <div><span class="demo-role" style="color:var(--portal-success);">Student</span> <span style="font-weight:600;">(K. Sai Kiran)</span></div>
+            <span class="demo-credentials">student@srikakatiya.com / School@321</span>
+          </div>
+          <div class="demo-row" onclick="document.getElementById('login-email').value='preethi@srikakatiya.com'; document.getElementById('login-password').value='School@321'; document.querySelector('.role-btn[data-role=student]').click();" style="border-left: 3px solid var(--portal-success);">
+            <div><span class="demo-role" style="color:var(--portal-success);">Student</span> <span style="font-weight:600;">(M. Preethi)</span></div>
+            <span class="demo-credentials">preethi@srikakatiya.com / School@321</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 2. FORGOT PASSWORD REQUEST SCREEN -->
@@ -167,8 +205,11 @@
   </div>
 
   <!-- DB & Auth APIs -->
-  <script src="assets/js/db.js"></script>
-  <script src="assets/js/auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/db.js?v=2"></script>
+  <script src="assets/js/auth.js?v=2"></script>
+  <script src="assets/js/migrate_data_to_supabase.js?v=2"></script>
 
   <!-- Login page dynamic logic -->
   <script>
@@ -326,7 +367,7 @@
       const forgotSubmitBtn = document.getElementById('forgot-submit-btn');
       let resetEmailRef = "";
 
-      forgotForm.addEventListener('submit', (e) => {
+      forgotForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearAlert();
 
@@ -334,8 +375,8 @@
         forgotSubmitBtn.disabled = true;
         forgotSubmitBtn.innerHTML = `<span class="spinner"></span> <span>Generating Code...</span>`;
 
-        setTimeout(() => {
-          const res = window.skhs_auth.forgotPasswordRequest(email);
+        try {
+          const res = await window.skhs_auth.forgotPasswordRequest(email);
           forgotSubmitBtn.disabled = false;
           forgotSubmitBtn.innerHTML = `<span>Send Recovery Code</span>`;
 
@@ -348,13 +389,22 @@
             
             // Inject values in sim tray
             document.getElementById('smtp-email').textContent = email;
-            document.getElementById('smtp-token').textContent = res.token;
+            document.getElementById('smtp-token').textContent = res.token || "Sent by Supabase";
             
-            showAlert("Verification token generated. Please check simulated SMTP tray below.", "success");
+            if (window.isSupabaseActive()) {
+              showAlert("A password reset email has been sent to your inbox.", "success");
+            } else {
+              showAlert("Verification token generated. Please check simulated SMTP tray below.", "success");
+            }
           } else {
             showAlert(res.message, "error");
           }
-        }, 800);
+        } catch (err) {
+          console.error(err);
+          showAlert("Error sending recovery request.", "error");
+          forgotSubmitBtn.disabled = false;
+          forgotSubmitBtn.innerHTML = `<span>Send Recovery Code</span>`;
+        }
       });
 
       // Submit Reset Password Action Form

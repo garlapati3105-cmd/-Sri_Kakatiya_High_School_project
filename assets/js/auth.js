@@ -151,6 +151,24 @@ function initActivityTracker() {
   setInterval(checkSessionTimeout, SESSION_CHECK_INTERVAL);
 }
 
+// Authentication AP// Helper to convert base64 image data url to Blob
+function dataURLtoBlob(dataurl) {
+  try {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return { blob: new Blob([u8arr], { type: mime }), mime };
+  } catch (e) {
+    console.error("[AUTH] Failed to parse base64 image data url:", e);
+    return null;
+  }
+}
+
 // Authentication API
 const auth = {
   // Login flow with security restrictions
@@ -162,93 +180,147 @@ const auth = {
       return { success: false, message: "Please fill in all fields." };
     }
 
-    const user = window.skhs_db.findOne('users', 'email', email);
-    if (!user) {
-      window.skhs_db.logActivity('failed_login', 'auth', 'warning', 'system', null, `Failed login attempt for non-existent email: ${email}`);
-      return { success: false, message: "Invalid email or password." };
-    }
-
-    if (expectedRole && user.role !== expectedRole) {
-      window.skhs_db.logActivity('failed_login', 'auth', 'warning', user.userId, null, `Login role mismatch for ${email}.`);
-      return { success: false, message: "Invalid email, password, or role." };
-    }
-
-    // Check lock state
-    if (user.status === 'locked') {
-      if (user.lockUntil && Date.now() > user.lockUntil) {
-        // Unlock account
-        window.skhs_db.update('users', 'userId', user.userId, {
-          status: 'active',
-          failedLoginAttempts: 0,
-          lockUntil: null
-        });
-        user.status = 'active';
-        user.failedLoginAttempts = 0;
-      } else {
-        const remainingMinutes = Math.ceil((user.lockUntil - Date.now()) / 60000);
-        window.skhs_db.logActivity('failed_login', 'auth', 'warning', user.userId, null, `Attempt to log in to locked account: ${email}`);
-        return { success: false, message: `Account is temporarily locked due to too many failed attempts. Try again in ${remainingMinutes} minute(s).` };
-      }
-    }
-
-    // Validate password
-    const hashedInput = await window.skhs_sha256(password);
-    if (hashedInput === user.password) {
-      // Reset attempts and update login time
-      window.skhs_db.update('users', 'userId', user.userId, {
-        failedLoginAttempts: 0,
-        lockUntil: null,
-        lastLogin: new Date().toISOString()
+    if (window.isSupabaseActive()) {
+      const supabase = window.getSupabaseClient();
+      
+      // Perform Supabase Auth login
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
       });
 
-      // Generate session
+      if (authError) {
+        console.warn("[AUTH] Supabase login error:", authError);
+        return { success: false, message: authError.message };
+      }
+
+      const sessionUser = authData.user;
+      
+      // Fetch public profile user details
+      const { data: userProfile, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', sessionUser.id)
+        .single();
+
+      if (profileError || !userProfile) {
+        console.error("[AUTH] User authenticated but public profile is missing:", profileError);
+        return { success: false, message: "Authorized but user profile could not be found." };
+      }
+
+      if (expectedRole && userProfile.role !== expectedRole) {
+        return { success: false, message: "Invalid email, password, or role." };
+      }
+
+      if (userProfile.status === 'locked' || !userProfile.account_active) {
+        return { success: false, message: "This account has been locked or deactivated. Please contact an administrator." };
+      }
+
+      // Map snake_case database columns to expected camelCase keys
+      const safeUser = {
+        userId: userProfile.id,
+        fullName: userProfile.full_name,
+        email: userProfile.email,
+        mobileNumber: userProfile.mobile_number,
+        role: userProfile.role,
+        profilePhoto: userProfile.profile_photo,
+        status: userProfile.status,
+        accountActive: userProfile.account_active,
+        isDefaultPassword: userProfile.is_default_password,
+        createdDate: userProfile.created_date,
+        lastLogin: userProfile.last_login
+      };
+
+      // Update last login in background
+      await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', sessionUser.id);
+
+      // Generate local session structure
       const now = Date.now();
-      const sessionToken = window.skhs_security.createId("SESS");
+      const sessionToken = "SESS-" + sessionUser.id;
       const session = {
         sessionToken,
-        userId: user.userId,
-        role: user.role,
+        userId: safeUser.userId,
+        role: safeUser.role,
         loginTimestamp: now,
         lastActivity: now,
         expiresAt: now + (rememberMe ? REMEMBER_ME_TIMEOUT : SESSION_ABSOLUTE_TIMEOUT),
-        rememberMe: rememberMe
+        rememberMe: rememberMe,
+        userProfile: safeUser // Cache safe user profile synchronously in storage
       };
 
       saveActiveSession(session);
-      window.skhs_db.logActivity('login', 'auth', 'info', user.userId, null, `Successful login from role: ${user.role}`);
       
-      // Only set accountActive if it was never explicitly set (first-time data migration guard).
-      // Do NOT silently re-activate an account that was deliberately deactivated by an admin.
-      if (user.accountActive === undefined || user.accountActive === null) {
-        window.skhs_db.update('users', 'userId', user.userId, { accountActive: true });
+      // Log audit trail
+      if (window.skhs_db && typeof window.skhs_db.logActivity === 'function') {
+        await window.skhs_db.logActivity('login', 'auth', 'info', safeUser.userId, null, `Successful login from role: ${safeUser.role}`);
       }
 
-      return { success: true, redirect: ROUTE_CONFIG[user.role] };
+      return { success: true, redirect: ROUTE_CONFIG[safeUser.role] };
     } else {
-      // Failed login logic
-      const nextAttempts = (user.failedLoginAttempts || 0) + 1;
-      const updates = { failedLoginAttempts: nextAttempts };
-      let message = `Invalid email or password. Attempt ${nextAttempts} of 5.`;
+      // LocalStorage Fallback
+      const user = window.skhs_db.findOne('users', 'email', email);
+      if (user instanceof Promise) {
+        // Handle if findOne returned a promise in local mode
+        return { success: false, message: "Please wait, database is loading." };
+      }
+      
+      // Synchronous LocalStorage search
+      const localUsers = JSON.parse(localStorage.getItem("skhs_db_users") || "[]");
+      const localUser = localUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-      if (nextAttempts >= 5) {
-        updates.status = 'locked';
-        updates.lockUntil = Date.now() + 5 * 60 * 1000; // lock for 5 minutes
-        message = "Incorrect password. Account is now locked for 5 minutes due to consecutive failed attempts.";
-        window.skhs_db.logActivity('account_lock', 'auth', 'critical', user.userId, null, `User account locked due to excessive failed attempts.`);
-      } else {
-        window.skhs_db.logActivity('failed_login', 'auth', 'warning', user.userId, null, `Incorrect password entered for ${email} (attempt ${nextAttempts}/5)`);
+      if (!localUser) {
+        return { success: false, message: "Invalid email or password." };
       }
 
-      window.skhs_db.update('users', 'userId', user.userId, updates);
-      return { success: false, message };
+      const hashedInput = await window.skhs_sha256(password);
+      if (hashedInput === localUser.password) {
+        const now = Date.now();
+        const sessionToken = window.skhs_security.createId("SESS");
+        
+        const safeUser = {
+          userId: localUser.userId,
+          fullName: localUser.fullName,
+          email: localUser.email,
+          mobileNumber: localUser.mobileNumber,
+          role: localUser.role,
+          profilePhoto: localUser.profilePhoto,
+          status: localUser.status,
+          accountActive: localUser.accountActive,
+          isDefaultPassword: localUser.isDefaultPassword,
+          createdDate: localUser.createdDate,
+          lastLogin: localUser.lastLogin
+        };
+
+        const session = {
+          sessionToken,
+          userId: safeUser.userId,
+          role: safeUser.role,
+          loginTimestamp: now,
+          lastActivity: now,
+          expiresAt: now + (rememberMe ? REMEMBER_ME_TIMEOUT : SESSION_ABSOLUTE_TIMEOUT),
+          rememberMe: rememberMe,
+          userProfile: safeUser
+        };
+
+        saveActiveSession(session);
+        return { success: true, redirect: ROUTE_CONFIG[safeUser.role] };
+      } else {
+        return { success: false, message: "Invalid email or password." };
+      }
     }
   },
 
   // Logout current user
-  logout() {
+  async logout() {
     const session = getActiveSession();
     if (session) {
-      window.skhs_db.logActivity('logout', 'auth', 'info', session.userId, null, `User manually logged out.`);
+      if (window.isSupabaseActive()) {
+        const supabase = window.getSupabaseClient();
+        await supabase.auth.signOut();
+      }
+      if (window.skhs_db && typeof window.skhs_db.logActivity === 'function') {
+        await window.skhs_db.logActivity('logout', 'auth', 'info', session.userId, null, `User manually logged out.`);
+      }
       clearActiveSession();
     }
     window.location.href = "login.html";
@@ -258,16 +330,7 @@ const auth = {
   getCurrentUser() {
     const session = getActiveSession();
     if (!session) return null;
-
-    const user = window.skhs_db.findOne('users', 'userId', session.userId);
-    if (!user || user.status !== 'active' || user.role !== session.role) {
-      clearActiveSession();
-      return null;
-    }
-
-    // Return user details without password fields
-    const { password, ...safeUser } = user;
-    return safeUser;
+    return session.userProfile || null;
   },
 
   // Check if role has permission
@@ -294,7 +357,6 @@ const auth = {
     if (!this.requireAuth()) return false;
     if (!this.hasPermission(permission)) {
       const user = this.getCurrentUser();
-      // Redirect to correct dashboard destination rather than showing raw error
       if (user && ROUTE_CONFIG[user.role]) {
         window.location.href = ROUTE_CONFIG[user.role];
       } else {
@@ -306,35 +368,33 @@ const auth = {
   },
 
   // Password Recovery Part 1: Verify and request token
-  forgotPasswordRequest(email) {
+  async forgotPasswordRequest(email) {
     email = normalizeEmail(email);
     if (!email) return { success: false, message: "Please enter your email." };
-    const user = window.skhs_db.findOne('users', 'email', email);
-    if (!user) {
-      window.skhs_db.logActivity('password_reset_request', 'auth', 'warning', 'system', null, `Failed reset request for non-existent email: ${email}`);
-      return { success: false, message: "If that email exists, a recovery code will be generated." };
+    
+    if (window.isSupabaseActive()) {
+      const supabase = window.getSupabaseClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/login.html?reset=true'
+      });
+      if (error) return { success: false, message: error.message };
+      return { success: true, message: "A recovery code and reset instructions have been dispatched by email." };
+    } else {
+      // LocalStorage Recovery code
+      const localUsers = JSON.parse(localStorage.getItem("skhs_db_users") || "[]");
+      const user = localUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (!user) {
+        return { success: false, message: "If that email exists, a recovery code will be generated." };
+      }
+      const token = window.skhs_security.createNumericCode(6);
+      sessionStorage.setItem(getResetTokenKey(email), JSON.stringify({
+        token,
+        userId: user.userId,
+        attempts: 0,
+        expires: Date.now() + 10 * 60 * 1000
+      }));
+      return { success: true, message: "A simulated email has been dispatched with your code.", token };
     }
-
-    // Generate a 6-digit random token
-    const token = window.skhs_security.createNumericCode(6);
-    sessionStorage.setItem(getResetTokenKey(email), JSON.stringify({
-      token,
-      userId: user.userId,
-      attempts: 0,
-      expires: Date.now() + 10 * 60 * 1000 // expires in 10 minutes
-    }));
-
-    window.skhs_db.logActivity(
-      'password_reset_request',
-      'auth',
-      'info',
-      user.userId,
-      null,
-      `Password reset code generated for ${email}.`
-    );
-
-    // Return success along with token (simulated email code display in login panel)
-    return { success: true, message: "A simulated email has been dispatched with your code.", token };
   },
 
   // Password Recovery Part 2: Verify code
@@ -374,94 +434,94 @@ const auth = {
   // Password Recovery Part 3: Apply new password
   async resetPasswordUpdate(email, token, newPassword) {
     email = normalizeEmail(email);
-    const verify = this.verifyResetToken(email, token);
-    if (!verify.success) return verify;
-
-    const user = window.skhs_db.findOne('users', 'email', email);
-    if (!user) return { success: false, message: "User not found." };
-
+    
     const strength = validatePasswordStrength(newPassword);
     if (!strength.valid) return { success: false, message: strength.message };
 
-    const hashedPwd = await window.skhs_sha256(newPassword);
-    
-    // Update user record
-    window.skhs_db.update('users', 'userId', user.userId, {
-      password: hashedPwd,
-      isDefaultPassword: false,
-      failedLoginAttempts: 0,
-      status: 'active',
-      lockUntil: null
-    });
+    if (window.isSupabaseActive()) {
+      const supabase = window.getSupabaseClient();
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) return { success: false, message: error.message };
+      return { success: true, message: "Password updated successfully!" };
+    } else {
+      const verify = this.verifyResetToken(email, token);
+      if (!verify.success) return verify;
 
-    sessionStorage.removeItem(getResetTokenKey(email));
-    
-    window.skhs_db.logActivity(
-      'password_reset_complete',
-      'auth',
-      'warning',
-      user.userId,
-      null,
-      `User password reset complete.`
-    );
+      const localUsers = JSON.parse(localStorage.getItem("skhs_db_users") || "[]");
+      const idx = localUsers.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+      if (idx === -1) return { success: false, message: "User not found." };
 
-    window.skhs_db.addNotification(
-      user.userId,
-      "Password Reset Successful",
-      "Your password has been successfully reset. You can now log in with your new credentials.",
-      "success"
-    );
+      const hashedPwd = await window.skhs_sha256(newPassword);
+      localUsers[idx].password = hashedPwd;
+      localUsers[idx].isDefaultPassword = false;
+      localStorage.setItem("skhs_db_users", JSON.stringify(localUsers));
 
-    return { success: true, message: "Password updated successfully!" };
+      sessionStorage.removeItem(getResetTokenKey(email));
+      return { success: true, message: "Password updated successfully!" };
+    }
   },
 
   // Inside profile: Change Password
   async changePassword(userId, oldPassword, newPassword) {
-    if (!currentSessionOwnsUser(userId)) {
+    const user = this.getCurrentUser();
+    if (!user || user.userId !== userId) {
       return { success: false, message: "You can only change your own password." };
-    }
-
-    const user = window.skhs_db.findOne('users', 'userId', userId);
-    if (!user) return { success: false, message: "User not found." };
-
-    const oldHash = await window.skhs_sha256(oldPassword);
-    if (oldHash !== user.password) {
-      window.skhs_db.logActivity('password_change', 'profile', 'warning', userId, null, `Attempt to change password failed (wrong old password).`);
-      return { success: false, message: "Incorrect current password." };
-    }
-
-    if (oldPassword === newPassword) {
-      return { success: false, message: "New password must be different from the current password." };
     }
 
     const strength = validatePasswordStrength(newPassword);
     if (!strength.valid) return { success: false, message: strength.message };
 
-    const newHash = await window.skhs_sha256(newPassword);
-    window.skhs_db.update('users', 'userId', userId, {
-      password: newHash,
-      isDefaultPassword: false
-    });
+    if (window.isSupabaseActive()) {
+      const supabase = window.getSupabaseClient();
+      
+      // Update password via Auth API
+      const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
+      if (authError) return { success: false, message: authError.message };
 
-    window.skhs_db.logActivity('password_change', 'profile', 'info', userId, null, `Password updated successfully.`);
-    window.skhs_db.addNotification(
-      userId,
-      "Password Changed",
-      "Your profile password was changed successfully.",
-      "success"
-    );
+      // Update flag in profile details
+      await supabase.from('users').update({ is_default_password: false }).eq('id', userId);
+      
+      // Sync cache
+      const session = getActiveSession();
+      if (session && session.userProfile) {
+        session.userProfile.isDefaultPassword = false;
+        saveActiveSession(session);
+      }
 
-    return { success: true, message: "Password updated successfully!" };
+      await window.skhs_db.logActivity('password_change', 'profile', 'info', userId, null, `Password updated successfully.`);
+      return { success: true, message: "Password updated successfully!" };
+    } else {
+      // LocalStorage Password change
+      const localUsers = JSON.parse(localStorage.getItem("skhs_db_users") || "[]");
+      const idx = localUsers.findIndex(u => u.userId === userId);
+      if (idx === -1) return { success: false, message: "User not found." };
+
+      const oldHash = await window.skhs_sha256(oldPassword);
+      if (oldHash !== localUsers[idx].password) {
+        return { success: false, message: "Incorrect current password." };
+      }
+
+      const newHash = await window.skhs_sha256(newPassword);
+      localUsers[idx].password = newHash;
+      localUsers[idx].isDefaultPassword = false;
+      localStorage.setItem("skhs_db_users", JSON.stringify(localUsers));
+
+      const session = getActiveSession();
+      if (session && session.userProfile) {
+        session.userProfile.isDefaultPassword = false;
+        saveActiveSession(session);
+      }
+
+      return { success: true, message: "Password updated successfully!" };
+    }
   },
 
   // Update contact details and profile photo
   updateProfile(userId, fullName, mobileNumber, profilePhoto) {
-    if (!currentSessionOwnsUser(userId)) {
+    const user = this.getCurrentUser();
+    if (!user || user.userId !== userId) {
       return { success: false, message: "You can only update your own profile." };
     }
-
-    const user = window.skhs_db.findOne('users', 'userId', userId);
-    if (!user) return { success: false, message: "User not found." };
 
     const updates = {};
     if (fullName !== null && fullName !== undefined) {
@@ -480,21 +540,101 @@ const auth = {
       updates.mobileNumber = safeMobile;
     }
 
-    if (profilePhoto !== null && profilePhoto !== undefined) {
-      if (!window.skhs_security.isAllowedImageDataUrl(profilePhoto)) {
-        return { success: false, message: "Profile photo must be a PNG, JPG, WebP, or GIF under 1MB." };
-      }
-      updates.profilePhoto = profilePhoto;
-    }
+    const session = getActiveSession();
+    if (!session) return { success: false, message: "No active session." };
+    
+    const updatedUser = { ...session.userProfile, ...updates };
 
-    const updatedUser = window.skhs_db.update('users', 'userId', userId, updates);
-    if (!updatedUser) {
-      return { success: false, message: "Could not save profile changes. Storage may be full." };
+    if (window.isSupabaseActive()) {
+      const supabase = window.getSupabaseClient();
+      
+      const dbUpdates = {};
+      if (updates.fullName) dbUpdates.full_name = updates.fullName;
+      if (updates.mobileNumber) dbUpdates.mobile_number = updates.mobileNumber;
+
+      // Handle Storage Upload in background
+      if (profilePhoto !== null && profilePhoto !== undefined) {
+        if (!window.skhs_security.isAllowedImageDataUrl(profilePhoto)) {
+          return { success: false, message: "Profile photo must be a PNG, JPG, WebP, or GIF under 1MB." };
+        }
+        
+        // Update local memory cache avatar immediately with base64 for fast feedback
+        updatedUser.profilePhoto = profilePhoto;
+        session.userProfile = updatedUser;
+        saveActiveSession(session);
+        
+        // Background upload
+        setTimeout(async () => {
+          const fileData = dataURLtoBlob(profilePhoto);
+          if (fileData) {
+            const fileExtension = fileData.mime.split('/')[1] || 'png';
+            const filePath = `photos/${userId}.${fileExtension}`;
+            
+            const { error: uploadError } = await supabase.storage
+              .from('school-media')
+              .upload(filePath, fileData.blob, { upsert: true, contentType: fileData.mime });
+
+            if (!uploadError) {
+              const { data: publicUrlData } = supabase.storage
+                .from('school-media')
+                .getPublicUrl(filePath);
+
+              dbUpdates.profile_photo = publicUrlData.publicUrl;
+              
+              // Update DB and then session storage cache
+              await supabase.from('users').update({ profile_photo: publicUrlData.publicUrl }).eq('id', userId);
+              
+              const currentSession = getActiveSession();
+              if (currentSession && currentSession.userProfile && currentSession.userId === userId) {
+                currentSession.userProfile.profilePhoto = publicUrlData.publicUrl;
+                saveActiveSession(currentSession);
+              }
+            }
+          }
+        }, 10);
+      }
+
+      // Update name and phone in background
+      if (Object.keys(dbUpdates).length > 0) {
+        supabase.from('users').update(dbUpdates).eq('id', userId)
+          .then(({ error }) => {
+            if (error) console.error("[AUTH] Background profile update failed:", error);
+          });
+      }
+
+      session.userProfile = updatedUser;
+      saveActiveSession(session);
+      
+      // Update in skhs_db cache
+      window.skhs_db.update('users', 'id', userId, dbUpdates);
+
+      return { success: true, user: updatedUser };
+
+    } else {
+      // LocalStorage Fallback profile update
+      if (profilePhoto !== null && profilePhoto !== undefined) {
+        if (!window.skhs_security.isAllowedImageDataUrl(profilePhoto)) {
+          return { success: false, message: "Profile photo must be a PNG, JPG, WebP, or GIF under 1MB." };
+        }
+        updates.profilePhoto = profilePhoto;
+      }
+
+      const localUsers = JSON.parse(localStorage.getItem("skhs_db_users") || "[]");
+      const idx = localUsers.findIndex(u => u.userId === userId);
+      if (idx === -1) return { success: false, message: "User not found." };
+
+      localUsers[idx] = { ...localUsers[idx], ...updates };
+      localStorage.setItem("skhs_db_users", JSON.stringify(localUsers));
+
+      const safeUser = { ...updatedUser, ...updates };
+      const session = getActiveSession();
+      if (session) {
+        session.userProfile = safeUser;
+        saveActiveSession(session);
+      }
+
+      return { success: true, user: safeUser };
     }
-    
-    window.skhs_db.logActivity('profile_update', 'profile', 'info', userId, null, `Updated profile contact/photo details.`);
-    
-    return { success: true, user: updatedUser };
   }
 };
 

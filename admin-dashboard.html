@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard – Sri Kakatiya High School</title>
+  <title>Admin Dashboard – Sri Kakatiya High School ERP</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,9 +12,8 @@
   
   <!-- Style Links -->
   <link rel="stylesheet" href="assets/css/portal.css">
-  
+
   <style>
-    /* Custom inline styles for dashboard specifics */
     .dashboard-title-group {
       margin-bottom: 2rem;
     }
@@ -28,6 +27,13 @@
       color: var(--portal-text-muted);
       font-size: 0.9rem;
     }
+    .portal-sidebar {
+      overflow-y: auto;
+    }
+    .chart-container-card {
+      min-height: 280px;
+      position: relative;
+    }
   </style>
 </head>
 <body class="portal-body">
@@ -38,25 +44,125 @@
     <aside class="portal-sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
-          <span>🦅 Admin Portal</span>
+          <span>🦅 Admin ERP</span>
         </div>
         <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Collapse Menu">◀</button>
       </div>
 
       <ul class="sidebar-menu">
         <li class="sidebar-item">
-          <a class="sidebar-link active" data-tab="profile">
-            <span>👤</span> <span class="menu-text">My Profile</span>
+          <a class="sidebar-link active" data-tab="overview">
+            <span>🏠</span> <span class="menu-text">Dashboard Home</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="students">
+            <span>🎓</span> <span class="menu-text">Students</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="teachers">
+            <span>💼</span> <span class="menu-text">Teachers</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="parents">
+            <span>👨‍👩‍👧</span> <span class="menu-text">Parents</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="classes">
+            <span>🏫</span> <span class="menu-text">Classes</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="subjects">
+            <span>📖</span> <span class="menu-text">Subjects</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="attendance">
+            <span>📅</span> <span class="menu-text">Attendance</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="exams">
+            <span>📝</span> <span class="menu-text">Exams</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="marks">
+            <span>📊</span> <span class="menu-text">Marks</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="homework">
+            <span>✍️</span> <span class="menu-text">Homework</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="fees">
+            <span>💰</span> <span class="menu-text">Fees</span>
           </a>
         </li>
         <li class="sidebar-item">
           <a class="sidebar-link" data-tab="notifications">
-            <span>🔔</span> <span class="menu-text">Notifications</span>
+            <span>🔔</span> <span class="menu-text">Circulars</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="reports">
+            <span>📈</span> <span class="menu-text">Reports</span>
           </a>
         </li>
         <li class="sidebar-item">
           <a class="sidebar-link" data-tab="audit-logs">
-            <span>📋</span> <span class="menu-text">Audit Logging</span>
+            <span>📋</span> <span class="menu-text">Audit Logs</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="academic-years">
+            <span>📅</span> <span class="menu-text">Academic Years</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="promotions">
+            <span>🚀</span> <span class="menu-text">Student Promotions</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="leaves">
+            <span>🏥</span> <span class="menu-text">Leave Management</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="calendar">
+            <span>📆</span> <span class="menu-text">School Calendar</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="backup-restore">
+            <span>💾</span> <span class="menu-text">DB Backup & Restore</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="id-generator">
+            <span>🪪</span> <span class="menu-text">ID Card Generator</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="certificates">
+            <span>📜</span> <span class="menu-text">Certificate Desk</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="settings">
+            <span>⚙️</span> <span class="menu-text">Settings</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="profile">
+            <span>👤</span> <span class="menu-text">My Profile</span>
           </a>
         </li>
       </ul>
@@ -73,9 +179,15 @@
       
       <!-- TOP NAV HEADER -->
       <header class="portal-header">
-        <div class="header-title" id="page-title-label">Admin Profile</div>
+        <div class="header-title" id="page-title-label">Dashboard Home</div>
         
         <div class="header-actions">
+          <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--portal-bg); padding: 0.35rem 0.75rem; border-radius: 10px; border: 1px solid var(--portal-border);">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--portal-text-muted); white-space: nowrap;">Active Year:</span>
+            <select id="header-academic-year-select" style="border: none; background: transparent; padding: 0; font-size: 0.85rem; font-weight: bold; cursor: pointer; color: var(--portal-text-main); outline: none; min-width: 80px;">
+              <!-- Dynamic -->
+            </select>
+          </div>
           <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">☀️</button>
           
           <div class="user-profile-widget" id="header-user-widget">
@@ -94,8 +206,1199 @@
         <!-- Alert Box -->
         <div id="dashboard-alert-container"></div>
 
-        <!-- 1. PROFILE SECTION -->
-        <section id="tab-profile" class="tab-view">
+        <!-- 1. OVERVIEW SECTION -->
+        <section id="tab-overview" class="tab-view">
+          <div class="dashboard-title-group">
+            <h2>School ERP Administration</h2>
+            <p>Real-time institutional KPI cards, registration trends, and activity updates.</p>
+          </div>
+
+          <!-- KPI Cards Grid -->
+          <div class="erp-stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(59, 130, 246, 0.1); color: var(--portal-info);">🎓</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-students">0</div>
+                <div class="stat-label">Students</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(16, 185, 129, 0.1); color: var(--portal-success);">💼</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-teachers">0</div>
+                <div class="stat-label">Teachers</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.1); color: var(--portal-warning);">👨‍👩‍👧</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-parents">0</div>
+                <div class="stat-label">Parents</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(10, 45, 110, 0.1); color: var(--portal-primary-light);">🏫</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-classes">0</div>
+                <div class="stat-label">Classes</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">📖</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-subjects">0</div>
+                <div class="stat-label">Subjects</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">📈</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-admissions">0</div>
+                <div class="stat-label">Admissions</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(239, 68, 68, 0.1); color: var(--portal-error);">🔔</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-notifications">0</div>
+                <div class="stat-label">Circulars</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(20, 184, 166, 0.1); color: #14b8a6;">👤</div>
+              <div class="stat-content">
+                <div class="stat-value" id="kpi-active-users">0</div>
+                <div class="stat-label">Active Users</div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!-- Recent Activity Widgets -->
+          <div class="portal-grid portal-grid-2">
+            <div class="portal-card">
+              <h3 class="card-title">Recent Admissions</h3>
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Student</th>
+                      <th>Class</th>
+                      <th>Admitted Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="widget-admissions-tbody">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="portal-card">
+              <h3 class="card-title">Upcoming Exams & Events</h3>
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Target</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="widget-events-tbody">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. STUDENT MANAGEMENT SECTION -->
+        <section id="tab-students" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Student Directory</h2>
+            <p>Add, edit, view, and search student records.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar">
+              <div class="search-input-wrapper">
+                <span class="search-input-icon">🔍</span>
+                <input type="text" id="student-search" class="form-input search-input" placeholder="Search by name or student ID...">
+              </div>
+              <div class="erp-filters">
+                <select id="student-filter-class" class="filter-select">
+                  <option value="all">All Classes</option>
+                  <!-- Classes dynamically loaded -->
+                </select>
+                <select id="student-filter-status" class="filter-select">
+                  <option value="all">All Statuses</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <button class="btn-portal" id="btn-add-student" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Add Student</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Section</th>
+                    <th>Roll No</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="students-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. TEACHER MANAGEMENT SECTION -->
+        <section id="tab-teachers" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Teacher Directory</h2>
+            <p>Manage school faculty details, qualifications, and class workloads.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar">
+              <div class="search-input-wrapper">
+                <span class="search-input-icon">🔍</span>
+                <input type="text" id="teacher-search" class="form-input search-input" placeholder="Search by name or subject...">
+              </div>
+              <div class="erp-filters">
+                <select id="teacher-filter-status" class="filter-select">
+                  <option value="all">All Statuses</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <button class="btn-portal" id="btn-add-teacher" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Add Teacher</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Qualification</th>
+                    <th>Specialization</th>
+                    <th>Experience</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="teachers-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. PARENT MANAGEMENT SECTION -->
+        <section id="tab-parents" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Parent Profiles</h2>
+            <p>Manage parent records and links to student accounts.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar">
+              <div class="search-input-wrapper">
+                <span class="search-input-icon">🔍</span>
+                <input type="text" id="parent-search" class="form-input search-input" placeholder="Search by parent name or phone...">
+              </div>
+              <button class="btn-portal" id="btn-add-parent" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Add Parent</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Linked Students</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="parents-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. CLASS MANAGEMENT SECTION -->
+        <section id="tab-classes" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Class & Section Management</h2>
+            <p>Configure classes (Nursery to 10th) and assign head Class Teachers.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="justify-content: flex-end;">
+              <button class="btn-portal" id="btn-add-class" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Add Class</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Class ID</th>
+                    <th>Class Name</th>
+                    <th>Class Teacher</th>
+                    <th>Student Count</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="classes-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. SUBJECT MANAGEMENT SECTION -->
+        <section id="tab-subjects" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Subject Directory</h2>
+            <p>Add subjects and assign faculty members to subjects inside specific classes.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="justify-content: flex-end;">
+              <button class="btn-portal" id="btn-add-subject" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Add Subject</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Subject ID</th>
+                    <th>Subject Name</th>
+                    <th>Class</th>
+                    <th>Assigned Teacher</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="subjects-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. ATTENDANCE SECTION -->
+        <section id="tab-attendance" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Attendance Manager</h2>
+            <p>Select a class and date to take attendance, or view statistics.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar">
+              <div class="erp-filters">
+                <select id="attendance-select-class" class="filter-select">
+                  <option value="">-- Choose Class --</option>
+                  <!-- Options dynamic -->
+                </select>
+                <input type="date" id="attendance-select-date" class="filter-select" style="line-height: normal;">
+                <button class="btn-portal" id="btn-load-attendance" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">Load Sheet</button>
+              </div>
+            </div>
+
+            <div id="attendance-sheet-wrapper" style="display: none;">
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Roll No</th>
+                      <th>Student Name</th>
+                      <th>Status (Mark Present / Absent)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendance-table-body">
+                    <!-- Dynamic sheet -->
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top: 1.5rem; text-align: right;">
+                <button class="btn-portal" id="btn-save-attendance" style="width: auto; padding: 0.75rem 2rem;">Save Attendance Sheet</button>
+              </div>
+            </div>
+
+            <div id="attendance-empty-message" style="text-align: center; padding: 2rem; color: var(--portal-text-muted);">
+              Please select a class and date, then click 'Load Sheet' to update attendance.
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. EXAMINATION SECTION -->
+        <section id="tab-exams" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Exams Calendar</h2>
+            <p>Schedule tests, update exam details, and publish report cards.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="justify-content: flex-end;">
+              <button class="btn-portal" id="btn-add-exam" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Create Exam</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Exam ID</th>
+                    <th>Exam Name</th>
+                    <th>Type</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="exams-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. MARKS ENTRY SECTION -->
+        <section id="tab-marks" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Grades & Marks Register</h2>
+            <p>Upload marks, review class performance, and edit scores.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar">
+              <div class="erp-filters">
+                <select id="marks-select-exam" class="filter-select">
+                  <option value="">-- Choose Exam --</option>
+                  <!-- Dynamic -->
+                </select>
+                <select id="marks-select-class" class="filter-select">
+                  <option value="">-- Choose Class --</option>
+                  <!-- Dynamic -->
+                </select>
+                <button class="btn-portal" id="btn-load-marks-sheet" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">Load Scorecard</button>
+              </div>
+            </div>
+
+            <div id="marks-sheet-wrapper" style="display: none;">
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Roll No</th>
+                      <th>Student ID</th>
+                      <th>Student Name</th>
+                      <th>Marks Obtained</th>
+                      <th>Max Marks</th>
+                    </tr>
+                  </thead>
+                  <tbody id="marks-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+              <div style="margin-top: 1.5rem; text-align: right;">
+                <button class="btn-portal" id="btn-save-marks" style="width: auto; padding: 0.75rem 2rem;">Save Marks Sheet</button>
+              </div>
+            </div>
+
+            <div id="marks-empty-message" style="text-align: center; padding: 2rem; color: var(--portal-text-muted);">
+              Choose an exam and class, then click 'Load Scorecard' to insert marks.
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. HOMEWORK SECTION -->
+        <section id="tab-homework" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Homework Assignments</h2>
+            <p>Assign homework and track class submission statuses.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="justify-content: flex-end;">
+              <button class="btn-portal" id="btn-add-homework" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Post Homework</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Homework ID</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Title</th>
+                    <th>Assigned Date</th>
+                    <th>Due Date</th>
+                    <th>Completion Tracker</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="homework-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 11. FEE MANAGEMENT SECTION -->
+        <section id="tab-fees" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Finance & Fees Registry</h2>
+            <p>Manage tuition structures, verify payment history, and monitor defaulters.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="inner-tab-nav">
+              <button class="inner-tab-btn active" id="btn-fee-invoices">Fee Invoices</button>
+              <button class="inner-tab-btn" id="btn-fee-defaulters">Fee Defaulters</button>
+            </div>
+
+            <!-- Fee Invoices Sub-view -->
+            <div id="fee-invoices-pane">
+              <div class="erp-toolbar">
+                <div class="search-input-wrapper">
+                  <span class="search-input-icon">🔍</span>
+                  <input type="text" id="fee-search" class="form-input search-input" placeholder="Search by student name...">
+                </div>
+                <button class="btn-portal" id="btn-add-fee" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Create Fee Invoice</button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Invoice ID</th>
+                      <th>Student</th>
+                      <th>Fee Type</th>
+                      <th>Amount</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fees-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Fee Defaulters Sub-view -->
+            <div id="fee-defaulters-pane" style="display: none;">
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Student ID</th>
+                      <th>Student Name</th>
+                      <th>Class</th>
+                      <th>Pending Amount</th>
+                      <th>Due Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fee-defaulters-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12. CIRCULARS / NOTIFICATIONS SECTION -->
+        <section id="tab-notifications" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Circulars & System Announcements</h2>
+            <p>Publish bulletins, notices, and critical alerts targeted by user roles.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Notifications feed -->
+            <div class="portal-card">
+              <h3 class="card-title">Circular History</h3>
+              <div class="notifications-feed" id="notifications-feed-list">
+                <!-- Dynamic -->
+              </div>
+            </div>
+
+            <!-- Post a circular -->
+            <div class="portal-card">
+              <h3 class="card-title">Broadcast Notice</h3>
+              <form id="broadcast-notification-form">
+                <div class="form-group">
+                  <label class="form-label" for="ntf-target">Recipient Group</label>
+                  <div class="input-wrapper">
+                    <select id="ntf-target" class="form-input" style="padding: 0.75rem;">
+                      <option value="all">Broadcast to All</option>
+                      <option value="teachers">Teachers Only</option>
+                      <option value="parents">Parents Only</option>
+                      <option value="students">Students Only</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="ntf-title">Notification Title</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="ntf-title" class="form-input" placeholder="e.g. Annual Sports Meet Schedule" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="ntf-message">Message Details</label>
+                  <div class="input-wrapper">
+                    <textarea id="ntf-message" class="form-input" rows="4" placeholder="Write notice contents here..." required style="resize: vertical;"></textarea>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="ntf-type">Notice Category</label>
+                  <div class="input-wrapper">
+                    <select id="ntf-type" class="form-input" style="padding: 0.75rem;">
+                      <option value="info">Information (Blue)</option>
+                      <option value="success">Success Announcement (Green)</option>
+                      <option value="warning">Warning / Alert (Orange)</option>
+                      <option value="alert">Critical Emergency (Red)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-portal" id="send-ntf-btn">Broadcast Notice ✦</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- 13. REPORTS MODULE SECTION -->
+        <section id="tab-reports" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>ERP Reports Center</h2>
+            <p>Generate, filter, and export data records as CSV or printable PDF views.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-2">
+            <!-- Student Report -->
+            <div class="portal-card">
+              <h3 class="card-title">Students Report</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1rem;">Export student directories filtered by class.</p>
+              <div class="form-group">
+                <select id="report-student-class" class="filter-select" style="width: 100%;">
+                  <option value="all">All Classes</option>
+                  <!-- Loaded dynamically -->
+                </select>
+              </div>
+              <div class="btn-action-group" style="gap: 0.75rem;">
+                <button class="btn-portal" id="btn-rep-stud-csv" style="width: auto; padding: 0.5rem 1rem;">Export CSV</button>
+                <button class="btn-portal" id="btn-rep-stud-pdf" style="width: auto; padding: 0.5rem 1rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Print PDF</button>
+              </div>
+            </div>
+
+            <!-- Faculty Report -->
+            <div class="portal-card">
+              <h3 class="card-title">Faculty Report</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1rem;">Export full lists of teachers, experience, and contact detail records.</p>
+              <div class="btn-action-group" style="gap: 0.75rem; margin-top: 1.85rem;">
+                <button class="btn-portal" id="btn-rep-teach-csv" style="width: auto; padding: 0.5rem 1rem;">Export CSV</button>
+                <button class="btn-portal" id="btn-rep-teach-pdf" style="width: auto; padding: 0.5rem 1rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Print PDF</button>
+              </div>
+            </div>
+
+            <!-- Attendance Summary Report -->
+            <div class="portal-card">
+              <h3 class="card-title">Attendance Report</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1rem;">Generate attendance logs by class for custom date parameters.</p>
+              <div class="form-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <select id="report-att-class" class="filter-select" style="flex: 1; min-width: 120px;">
+                  <option value="all">All Classes</option>
+                </select>
+                <select id="report-att-period" class="filter-select" style="flex: 1; min-width: 120px;">
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+                <div id="report-att-controls-container" style="display: flex; gap: 0.5rem; flex: 2; min-width: 250px; flex-wrap: wrap;">
+                  <input type="date" id="report-att-date" class="filter-select" style="flex: 1; min-width: 140px; line-height: normal;">
+                </div>
+              </div>
+              <div class="btn-action-group" style="gap: 0.75rem;">
+                <button class="btn-portal" id="btn-rep-att-csv" style="width: auto; padding: 0.5rem 1rem;">Export CSV</button>
+                <button class="btn-portal" id="btn-rep-att-pdf" style="width: auto; padding: 0.5rem 1rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Print PDF</button>
+              </div>
+            </div>
+
+            <!-- Fee Transaction Report -->
+            <div class="portal-card">
+              <h3 class="card-title">Fee Invoice Report</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1rem;">Review payment transactions, pending invoices, and collection logs.</p>
+              <div class="form-group">
+                <select id="report-fee-status" class="filter-select" style="width: 100%;">
+                  <option value="all">All Statuses</option>
+                  <option value="Paid">Paid Only</option>
+                  <option value="Pending">Pending Only</option>
+                </select>
+              </div>
+              <div class="btn-action-group" style="gap: 0.75rem;">
+                <button class="btn-portal" id="btn-rep-fee-csv" style="width: auto; padding: 0.5rem 1rem;">Export CSV</button>
+                <button class="btn-portal" id="btn-rep-fee-pdf" style="width: auto; padding: 0.5rem 1rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Print PDF</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 14. AUDIT LOGS SECTION -->
+        <section id="tab-audit-logs" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>System Audit Trails</h2>
+            <p>Real-time security auditing log tracking actions, security triggers, and updates.</p>
+          </div>
+
+          <div class="portal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+              <h3 class="card-title" style="margin-bottom: 0;">Logs Database</h3>
+              
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <input type="text" id="log-search-user" class="filter-select" style="max-width: 150px;" placeholder="Search User ID...">
+                <select id="log-filter-module" class="filter-select" style="max-width: 130px;">
+                  <option value="all">All Modules</option>
+                  <option value="auth">Authentication</option>
+                  <option value="profile">Profile Editor</option>
+                  <option value="student">Students ERP</option>
+                  <option value="teacher">Teachers ERP</option>
+                  <option value="parent">Parents ERP</option>
+                </select>
+                <select id="log-filter-severity" class="filter-select" style="max-width: 130px;">
+                  <option value="all">All Severities</option>
+                  <option value="info">Info</option>
+                  <option value="warning">Warning</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Log ID</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>Severity</th>
+                    <th>Performed By</th>
+                    <th>Details</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-logs-table-body">
+                  <!-- Javascript dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 17. ACADEMIC YEARS SECTION -->
+        <section id="tab-academic-years" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Academic Session Management</h2>
+            <p>Create, edit, activate, or archive school academic sessions.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="justify-content: flex-end;">
+              <button class="btn-portal" id="btn-add-academic-year" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Add Academic Year</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>AY ID</th>
+                    <th>Session Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="academic-years-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 18. STUDENT PROMOTION SECTION -->
+        <section id="tab-promotions" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Student Promotion & Migration System</h2>
+            <p>Promote individual students or perform bulk class migrations to new academic sessions.</p>
+          </div>
+
+          <div class="portal-card" style="margin-bottom: 1.5rem;">
+            <div class="inner-tab-nav">
+              <button class="inner-tab-btn active" id="btn-promo-desk">Promotion Desk</button>
+              <button class="inner-tab-btn" id="btn-promo-logs">Migration History Logs</button>
+            </div>
+          </div>
+
+          <!-- Promotion Desk Pane -->
+          <div id="promo-desk-pane" class="portal-card">
+            <div class="portal-grid portal-grid-3" style="align-items: flex-end; gap: 1rem; margin-bottom: 1.5rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Source Class (Current)</label>
+                <select id="promo-source-class" class="form-input" style="padding: 0.5rem;">
+                  <option value="">-- Choose Class --</option>
+                  <!-- Dynamic -->
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Target Class (Promoted To)</label>
+                <select id="promo-target-class" class="form-input" style="padding: 0.5rem;">
+                  <option value="">-- Choose Class --</option>
+                  <!-- Dynamic -->
+                </select>
+              </div>
+              <button class="btn-portal" id="btn-load-promo-roster" style="padding: 0.65rem 1rem; height: auto;">Load Student Roster</button>
+            </div>
+
+            <div id="promo-roster-wrapper" style="display: none;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h4 style="margin: 0; font-size: 0.95rem;">Eligible Students List</h4>
+                <div style="display: flex; gap: 0.75rem;">
+                  <button class="btn-portal" id="btn-promo-select-all" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.75rem; background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border);">Select All</button>
+                  <button class="btn-portal" id="btn-promo-deselect-all" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.75rem; background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border);">Deselect All</button>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">Select</th>
+                      <th>Roll No</th>
+                      <th>Student ID</th>
+                      <th>Student Name</th>
+                      <th>Current Class</th>
+                    </tr>
+                  </thead>
+                  <tbody id="promo-roster-table-body">
+                    <!-- Dynamic roster -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="margin-top: 1.5rem; text-align: right;">
+                <button class="btn-portal" id="btn-submit-bulk-promotion" style="width: auto; padding: 0.75rem 2rem;">Execute Class Promotion 🚀</button>
+              </div>
+            </div>
+
+            <div id="promo-empty-msg" style="text-align: center; padding: 3rem 1rem; color: var(--portal-text-muted);">
+              Select a source class and click 'Load Student Roster' to initiate the promotion workflow.
+            </div>
+          </div>
+
+          <!-- Promotion Logs Pane -->
+          <div id="promo-logs-pane" class="portal-card" style="display: none;">
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Promo ID</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>From Class</th>
+                    <th>To Class</th>
+                    <th>Promotion Date</th>
+                    <th>Academic Year</th>
+                  </tr>
+                </thead>
+                <tbody id="promo-logs-table-body">
+                  <!-- Dynamic Logs -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 19. LEAVE MANAGEMENT SECTION -->
+        <section id="tab-leaves" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Leave Management Desk</h2>
+            <p>Track, approve, reject, and report leave applications for students and school faculty.</p>
+          </div>
+
+          <!-- Leave Stats Widgets -->
+          <div class="erp-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 1.5rem;">
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.1); color: var(--portal-warning);">⏳</div>
+              <div class="stat-content">
+                <div class="stat-value" id="leave-kpi-pending">0</div>
+                <div class="stat-label">Pending Requests</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(16, 185, 129, 0.1); color: var(--portal-success);">✅</div>
+              <div class="stat-content">
+                <div class="stat-value" id="leave-kpi-approved">0</div>
+                <div class="stat-label">Approved Leaves</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon-wrap" style="background: rgba(239, 68, 68, 0.1); color: var(--portal-error);">❌</div>
+              <div class="stat-content">
+                <div class="stat-value" id="leave-kpi-rejected">0</div>
+                <div class="stat-label">Rejected Requests</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar">
+              <div class="erp-filters">
+                <select id="leave-filter-type" class="filter-select" style="max-width: 150px;">
+                  <option value="all">All Types</option>
+                  <option value="Student">Student Leaves</option>
+                  <option value="Teacher">Teacher Leaves</option>
+                </select>
+                <select id="leave-filter-status" class="filter-select" style="max-width: 150px;">
+                  <option value="all">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+              <button class="btn-portal" id="btn-request-leave" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Create Leave Request</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Leave ID</th>
+                    <th>Applicant</th>
+                    <th>Role</th>
+                    <th>Dates (Start - End)</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leaves-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 20. SCHOOL CALENDAR SECTION -->
+        <section id="tab-calendar" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>School Academic Calendar</h2>
+            <p>Manage school schedules, holidays, examinations, sports competitions, and parent-teacher conferences.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+              <div class="erp-filters" style="flex: 1; min-width: 250px;">
+                <button class="btn-portal" id="btn-cal-prev" style="width: auto; padding: 0.5rem 1rem; background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border);">◀</button>
+                <h3 id="cal-current-month-year" style="margin: 0; font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; text-align: center; min-width: 160px;">June 2026</h3>
+                <button class="btn-portal" id="btn-cal-next" style="width: auto; padding: 0.5rem 1rem; background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border);">▶</button>
+              </div>
+              <div class="erp-filters" style="justify-content: flex-end; flex: 2; gap: 0.75rem; flex-wrap: wrap;">
+                <div class="inner-tab-nav" style="margin-bottom: 0; border: 1px solid var(--portal-border); border-radius: 10px; padding: 0.25rem;">
+                  <button class="inner-tab-btn active" id="btn-cal-view-month" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Month</button>
+                  <button class="inner-tab-btn" id="btn-cal-view-week" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Week</button>
+                  <button class="inner-tab-btn" id="btn-cal-view-agenda" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Agenda</button>
+                </div>
+                <select id="cal-filter-category" class="filter-select" style="max-width: 150px;">
+                  <option value="all">All Categories</option>
+                  <option value="Exam">Examinations</option>
+                  <option value="Holiday">Holidays</option>
+                  <option value="Event">School Events</option>
+                  <option value="Meeting">Parent Meetings</option>
+                </select>
+                <button class="btn-portal" id="btn-cal-add-event" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">+ Create Event</button>
+              </div>
+            </div>
+
+            <!-- Calendar Display Area -->
+            <div id="calendar-month-view">
+              <!-- Visual calendar grid -->
+              <div id="calendar-month-grid-container"></div>
+            </div>
+            <div id="calendar-week-view" style="display: none;">
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 150px;">Date / Day</th>
+                      <th>Scheduled Events & Activities</th>
+                    </tr>
+                  </thead>
+                  <tbody id="calendar-week-table-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="calendar-agenda-view" style="display: none;">
+              <div class="notifications-feed" id="calendar-agenda-list-container">
+                <!-- Dynamic List cards -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 21. DATABASE BACKUP & RESTORE SECTION -->
+        <section id="tab-backup-restore" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Database Utility Center</h2>
+            <p>Perform complete exports, restore system states from backups, or clean directories back to factory seed settings.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-2">
+            <!-- Backup creation card -->
+            <div class="portal-card">
+              <h3 class="card-title">💾 Backup Database</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1.5rem;">Download a structured JSON configuration snapshot containing all student, parent, attendance, fee registers, and system logs.</p>
+              <button class="btn-portal" id="btn-db-export" style="max-width: 250px;">Download Backup JSON</button>
+            </div>
+
+            <!-- Restore card -->
+            <div class="portal-card">
+              <h3 class="card-title">📂 Restore Database Session</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1.25rem;">Select and upload a previously exported school database JSON file to restore settings.</p>
+              <div class="form-group">
+                <label class="upload-btn-label" style="width: 100%; text-align: center; border-style: dashed; padding: 1.25rem 1rem;">
+                  <span id="db-restore-file-label">Choose Backup JSON File</span>
+                  <input type="file" id="db-restore-file-input" class="hidden-file-input" accept=".json">
+                </label>
+              </div>
+              <button class="btn-portal" id="btn-db-import" style="max-width: 250px; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);" disabled>Restore Database State</button>
+            </div>
+
+            <!-- Database summary status -->
+            <div class="portal-card">
+              <h3 class="card-title">📈 System Storage Stats</h3>
+              <div class="profile-detail-grid" style="grid-template-columns: 1fr; gap: 0.75rem;">
+                <div class="profile-detail-item"><span class="profile-detail-label">Current Version</span><span class="profile-detail-value" id="db-stat-version">7.0</span></div>
+                <div class="profile-detail-item"><span class="profile-detail-label">Indexed Tables</span><span class="profile-detail-value">19 Collections</span></div>
+                <div class="profile-detail-item"><span class="profile-detail-label">Calculated Backup Size</span><span class="profile-detail-value" id="db-stat-size">0 KB</span></div>
+                <div class="profile-detail-item"><span class="profile-detail-label">Last Backup Status</span><span class="profile-detail-value" id="db-stat-status" style="color: var(--portal-success); font-weight: bold;">Healthy</span></div>
+              </div>
+            </div>
+
+            <!-- Factory Reset card -->
+            <div class="portal-card" style="border-color: rgba(239, 68, 68, 0.3);">
+              <h3 class="card-title" style="color: var(--portal-error);">⚠️ Danger Zone</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1.5rem;">Clears all custom additions, registrations, attendance registers, fee invoices, and restores the environment back to fresh seed data.</p>
+              <button class="btn-portal" id="btn-db-reset-demo" style="max-width: 250px; background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border: none;">Factory Reset Demo Data</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 22. ID CARD GENERATOR SECTION -->
+        <section id="tab-id-generator" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Identity Card Desk</h2>
+            <p>Generate, preview, and output physical identity cards for students and faculty members.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Form Card selector -->
+            <div class="portal-card">
+              <h3 class="card-title">Configure ID Card</h3>
+              <form id="id-card-config-form">
+                <div class="form-group">
+                  <label class="form-label">Member Role Category</label>
+                  <select id="id-card-role" class="form-input">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher / Faculty</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" id="id-card-member-select-label">Choose Student</label>
+                  <select id="id-card-member-select" class="form-input">
+                    <!-- Dynamic options loaded -->
+                  </select>
+                </div>
+                <button type="submit" class="btn-portal">Generate ID Card Card ✦</button>
+              </form>
+            </div>
+
+            <!-- Visual Preview Card -->
+            <div class="portal-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;">
+              <h3 class="card-title" style="width: 100%; text-align: left;">Live Preview</h3>
+
+              <!-- ID Card Body -->
+              <div id="id-card-render-preview" style="width: 100%; display: flex; justify-content: center; min-height: 250px;">
+                <!-- ID Card graphic goes here -->
+                <div style="color: var(--portal-text-muted); font-size: 0.85rem; text-align: center; padding: 2rem;">
+                  Configure card selections and click generate to inspect mock layout.
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="btn-action-group" style="width: 100%; justify-content: center; gap: 0.75rem;">
+                <button class="btn-portal" id="btn-id-print" style="width: auto; padding: 0.5rem 1.5rem;" disabled>Print Card</button>
+                <button class="btn-portal" id="btn-id-pdf" style="width: auto; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);" disabled>Print PDF</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 23. CERTIFICATE GENERATOR SECTION -->
+        <section id="tab-certificates" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>Official Certificate Registry</h2>
+            <p>Generate certified bonafide, study, achievement, or participation credentials with official school signatures.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Configuration panel -->
+            <div class="portal-card">
+              <h3 class="card-title">Setup Certificate Parameters</h3>
+              <form id="certificate-generator-form">
+                <div class="form-group">
+                  <label class="form-label">Certificate Blueprint Type</label>
+                  <select id="cert-type" class="form-input">
+                    <option value="Bonafide Certificate">Bonafide Certificate</option>
+                    <option value="Study Certificate">Study Certificate</option>
+                    <option value="Participation Certificate">Participation Certificate</option>
+                    <option value="Achievement Certificate">Achievement Certificate</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Select Student Registry</label>
+                  <select id="cert-student-select" class="form-input">
+                    <!-- Dynamic list -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Academic Year Scope</label>
+                  <select id="cert-ay-select" class="form-input">
+                    <!-- Dynamic -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Issue Date</label>
+                  <input type="date" id="cert-issue-date" class="form-input" required>
+                </div>
+                <div class="form-group" id="cert-achievement-text-group" style="display: none;">
+                  <label class="form-label">Achievement / Event Details</label>
+                  <input type="text" id="cert-achievement-text" class="form-input" placeholder="e.g. Secured 1st Position in Science Exhibition">
+                </div>
+                <button type="submit" class="btn-portal">Draft Certificate ✦</button>
+              </form>
+            </div>
+
+            <!-- Preview panel -->
+            <div class="portal-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;">
+              <h3 class="card-title" style="width: 100%; text-align: left;">Preview Panel</h3>
+
+              <div id="certificate-render-preview" style="width: 100%; display: flex; justify-content: center;">
+                <div style="color: var(--portal-text-muted); font-size: 0.85rem; text-align: center; padding: 2rem;">
+                  Setup parameters and click Draft to visual preview.
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="btn-action-group" style="width: 100%; justify-content: center; gap: 0.75rem;">
+                <button class="btn-portal" id="btn-cert-print" style="width: auto; padding: 0.5rem 1.5rem;" disabled>Print Certificate</button>
+                <button class="btn-portal" id="btn-cert-pdf" style="width: auto; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);" disabled>Print PDF</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 15. SETTINGS MODULE SECTION -->
+        <!-- 15. SETTINGS MODULE SECTION -->
+        <section id="tab-settings" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group">
+            <h2>ERP Configuration Settings</h2>
+            <p>Configure general school metadata and active session policies.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-2">
+            <div class="portal-card">
+              <h3 class="card-title">School Profile</h3>
+              <form id="settings-school-form">
+                <div class="form-group">
+                  <label class="form-label" for="set-school-name">School Name</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="set-school-name" class="form-input" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="set-principal-name">Principal Name</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="set-principal-name" class="form-input" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="set-contact-info">Contact Information</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="set-contact-info" class="form-input" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn-portal" style="width: auto; padding: 0.5rem 1.5rem;">Save School Profile</button>
+              </form>
+            </div>
+
+            <div class="portal-card">
+              <h3 class="card-title">Security & Session Policy</h3>
+              <form id="settings-security-form">
+                <div class="form-group">
+                  <label class="form-label" for="set-pwd-min-len">Minimum Password Length</label>
+                  <div class="input-wrapper">
+                    <input type="number" id="set-pwd-min-len" class="form-input" min="6" max="20" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="set-session-timeout">Inactivity Timeout (Minutes)</label>
+                  <div class="input-wrapper">
+                    <input type="number" id="set-session-timeout" class="form-input" min="5" max="180" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn-portal" style="width: auto; padding: 0.5rem 1.5rem; background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Save Policies</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- 16. PROFILE SECTION -->
+        <section id="tab-profile" class="tab-view" style="display: none;">
           <div class="dashboard-title-group">
             <h2>Account Profile</h2>
             <p>View completion tracking, edit contact info, and update security credentials.</p>
@@ -202,437 +1505,36 @@
           </div>
         </section>
 
-        <!-- 2. NOTIFICATIONS SECTION -->
-        <section id="tab-notifications" class="tab-view" style="display: none;">
-          <div class="dashboard-title-group">
-            <h2>Circulars & System Messages</h2>
-            <p>Post and manage school notifications for students, parents, and teachers.</p>
-          </div>
-
-          <div class="portal-grid portal-grid-main-side">
-            <!-- Notifications feed -->
-            <div class="portal-card">
-              <h3 class="card-title">Notification History</h3>
-              <div class="notifications-feed" id="notifications-feed-list">
-                <!-- Javascript dynamic loading -->
-              </div>
-            </div>
-
-            <!-- Post a simulated circular -->
-            <div class="portal-card">
-              <h3 class="card-title">Send Broadcast Circular</h3>
-              <form id="broadcast-notification-form">
-                <div class="form-group">
-                  <label class="form-label" for="ntf-target">Target User (Demo Select)</label>
-                  <div class="input-wrapper">
-                    <select id="ntf-target" class="form-input" style="padding: 0.75rem;">
-                      <option value="all">Broadcast to All Roles</option>
-                      <option value="USR-002">Teacher (K. Raghupathi)</option>
-                      <option value="USR-003">Parent (Madhusudhan Rao)</option>
-                      <option value="USR-004">Student (K. Sai Kiran)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="ntf-title">Title</label>
-                  <div class="input-wrapper">
-                    <input type="text" id="ntf-title" class="form-input" placeholder="e.g. Science Fair Postponed" required>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="ntf-message">Message Content</label>
-                  <div class="input-wrapper">
-                    <textarea id="ntf-message" class="form-input" rows="4" placeholder="Write circular note details here..." required style="resize: vertical;"></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="ntf-type">Notification Type</label>
-                  <div class="input-wrapper">
-                    <select id="ntf-type" class="form-input" style="padding: 0.75rem;">
-                      <option value="info">Info (Blue)</option>
-                      <option value="success">Success (Green)</option>
-                      <option value="warning">Warning (Orange)</option>
-                      <option value="alert">Alert (Red)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <button type="submit" class="btn-portal" id="send-ntf-btn">Broadcast Message ✦</button>
-              </form>
-            </div>
-          </div>
-        </section>
-
-        <!-- 3. AUDIT LOGS SECTION -->
-        <section id="tab-audit-logs" class="tab-view" style="display: none;">
-          <div class="dashboard-title-group">
-            <h2>System Audit Trails</h2>
-            <p>Real-time security auditing log tracking actions, security triggers, and updates.</p>
-          </div>
-
-          <div class="portal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-              <h3 class="card-title" style="margin-bottom: 0;">Logs Database</h3>
-              
-              <div style="display: flex; gap: 1rem;">
-                <select id="log-filter-module" class="form-input" style="padding: 0.5rem; max-width: 150px; font-size: 0.8rem;">
-                  <option value="all">All Modules</option>
-                  <option value="auth">Authentication</option>
-                  <option value="profile">Profile Editor</option>
-                </select>
-                <select id="log-filter-severity" class="form-input" style="padding: 0.5rem; max-width: 150px; font-size: 0.8rem;">
-                  <option value="all">All Severities</option>
-                  <option value="info">Info</option>
-                  <option value="warning">Warning</option>
-                  <option value="critical">Critical</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="table-responsive">
-              <table class="portal-table">
-                <thead>
-                  <tr>
-                    <th>Log ID</th>
-                    <th>Action</th>
-                    <th>Module</th>
-                    <th>Severity</th>
-                    <th>Performed By</th>
-                    <th>Details</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-                <tbody id="audit-logs-table-body">
-                  <!-- Javascript dynamic content -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
       </div>
     </main>
 
   </div>
 
+  <!-- UNIVERSAL MODAL VIEWPORT FOR ERP CRUD FORMS AND PROFILES -->
+  <div class="modal-backdrop" id="universal-modal-backdrop" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="universal-modal-title">Modal Title</h3>
+        <button class="modal-close-btn" id="universal-modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="universal-modal-body">
+        <!-- Form/Details template goes here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT ONLY REPORT HOLDER -->
+  <div class="print-only" id="print-report-holder"></div>
+
   <!-- DB & Auth APIs -->
-  <script src="assets/js/db.js"></script>
-  <script src="assets/js/auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/db.js?v=2"></script>
+  <script src="assets/js/auth.js?v=2"></script>
+  <script src="assets/js/migrate_data_to_supabase.js?v=2"></script>
 
-  <!-- Dashboard script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // 1. Guard check
-      if (!window.skhs_auth.requirePermission('VIEW_AUDIT_LOGS')) return;
+  <!-- ERP Core Controller -->
+  <script src="assets/js/erp.js"></script>
 
-      // Theme toggle initialization
-      const themeToggle = document.getElementById('theme-toggle');
-      const htmlEl = document.documentElement;
-
-      if (localStorage.getItem('portal_theme') === 'dark') {
-        htmlEl.classList.add('dark-theme');
-        themeToggle.textContent = '🌙';
-      } else {
-        htmlEl.classList.remove('dark-theme');
-        themeToggle.textContent = '☀️';
-      }
-
-      themeToggle.addEventListener('click', () => {
-        const isDark = htmlEl.classList.toggle('dark-theme');
-        localStorage.setItem('portal_theme', isDark ? 'dark' : 'light');
-        themeToggle.textContent = isDark ? '🌙' : '☀️';
-      });
-
-      // Sidebar Collapsible
-      const sidebar = document.getElementById('sidebar');
-      const sidebarToggle = document.getElementById('sidebar-toggle');
-      sidebarToggle.addEventListener('click', () => {
-        const isCollapsed = sidebar.classList.toggle('collapsed');
-        sidebarToggle.textContent = isCollapsed ? '▶' : '◀';
-        sidebarToggle.setAttribute('aria-label', isCollapsed ? 'Expand Menu' : 'Collapse Menu');
-      });
-
-      // Sidebar Menu switching
-      const menuLinks = document.querySelectorAll('.sidebar-link[data-tab]');
-      const tabViews = document.querySelectorAll('.tab-view');
-      const pageTitleLabel = document.getElementById('page-title-label');
-
-      menuLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const targetTab = link.getAttribute('data-tab');
-          
-          menuLinks.forEach(l => l.classList.remove('active'));
-          link.classList.add('active');
-
-          tabViews.forEach(v => v.style.display = 'none');
-          document.getElementById('tab-' + targetTab).style.display = 'block';
-
-          // Update header title
-          const titleMap = {
-            'profile': 'Admin Profile',
-            'notifications': 'Circulars & Alerts',
-            'audit-logs': 'Security Audit Trails'
-          };
-          pageTitleLabel.textContent = titleMap[targetTab] || 'Dashboard';
-          
-          // Refresh data if switching to logs or notifications
-          if (targetTab === 'audit-logs') {
-            loadAuditLogs();
-          } else if (targetTab === 'notifications') {
-            loadNotifications();
-          }
-        });
-      });
-
-      // User session load
-      let currentUser = window.skhs_auth.getCurrentUser();
-      
-      function renderUserData() {
-        if (!currentUser) return;
-        
-        // Header widget
-        document.getElementById('header-fullname').textContent = currentUser.fullName;
-        
-        const avatarSrc = window.skhs_security.isAllowedImageDataUrl(currentUser.profilePhoto)
-          ? currentUser.profilePhoto
-          : 'assets/images/logo.svg';
-        document.getElementById('header-avatar').src = avatarSrc;
-        document.getElementById('profile-avatar-preview').src = avatarSrc;
-
-        // Details Form
-        document.getElementById('profile-name').value = currentUser.fullName || '';
-        document.getElementById('profile-email').value = currentUser.email || '';
-        document.getElementById('profile-phone').value = currentUser.mobileNumber || '';
-
-        // Update Gauge
-        updateProfileGauge();
-      }
-
-      function updateProfileGauge() {
-        const percentage = window.skhs_db.calculateCompletion(currentUser);
-        
-        // Gauge visual
-        document.getElementById('profile-gauge-text').textContent = percentage + '%';
-        const circle = document.getElementById('profile-gauge-circle');
-        // SVG circle perimeter is 2 * PI * r = 2 * 3.14 * 31 = 194.68 (approx 195)
-        const circumference = 195;
-        const offset = circumference - (percentage / 100) * circumference;
-        circle.style.strokeDasharray = circumference;
-        circle.style.strokeDashoffset = offset;
-
-        // Checklist states
-        const checkPhoto = document.getElementById('check-photo');
-        const checkContact = document.getElementById('check-contact');
-        const checkPassword = document.getElementById('check-password');
-        const checkActive = document.getElementById('check-active');
-
-        // Photo
-        if (currentUser.profilePhoto) {
-          checkPhoto.classList.add('done');
-          checkPhoto.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkPhoto.classList.remove('done');
-          checkPhoto.querySelector('.status-icon').textContent = '❌';
-        }
-
-        // Contact
-        if (currentUser.mobileNumber) {
-          checkContact.classList.add('done');
-          checkContact.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkContact.classList.remove('done');
-          checkContact.querySelector('.status-icon').textContent = '❌';
-        }
-
-        // Password
-        if (!currentUser.isDefaultPassword) {
-          checkPassword.classList.add('done');
-          checkPassword.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkPassword.classList.remove('done');
-          checkPassword.querySelector('.status-icon').textContent = '❌';
-        }
-
-        // Active state
-        if (currentUser.accountActive) {
-          checkActive.classList.add('done');
-          checkActive.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkActive.classList.remove('done');
-          checkActive.querySelector('.status-icon').textContent = '❌';
-        }
-
-        // Gauge message
-        const desc = document.getElementById('profile-gauge-desc');
-        if (percentage === 100) {
-          desc.textContent = "Excellent! Your portal profile has been fully secured and verified.";
-        } else {
-          desc.textContent = `Finish the checklist below to complete profile settings (Current: ${percentage}%).`;
-        }
-      }
-
-      // Alert display
-      const alertContainer = document.getElementById('dashboard-alert-container');
-      function showAlert(message, type = 'success') {
-        window.skhs_dom.showAlert(alertContainer, message, type, 4000);
-      }
-
-      // 2. Profile Management Submissions
-      
-      // Detail changes
-      document.getElementById('profile-details-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('profile-name').value.trim();
-        const phone = document.getElementById('profile-phone').value.trim();
-
-        const res = window.skhs_auth.updateProfile(currentUser.userId, name, phone, null);
-        if (res.success) {
-          currentUser = res.user;
-          renderUserData();
-          showAlert("Profile contact details updated successfully!", "success");
-        } else {
-          showAlert(res.message, "error");
-        }
-      });
-
-      // Photo upload conversion to base64
-      document.getElementById('photo-file-input').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        if (!window.skhs_security.isAllowedImageFile(file)) {
-          showAlert("Choose a PNG, JPG, WebP, or GIF image under 1MB.", "error");
-          e.target.value = '';
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const base64Image = evt.target.result;
-          const res = window.skhs_auth.updateProfile(currentUser.userId, null, null, base64Image);
-          if (res.success) {
-            currentUser = res.user;
-            renderUserData();
-            showAlert("Profile picture updated successfully!", "success");
-          } else {
-            showAlert(res.message, "error");
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-
-      // Password modification
-      document.getElementById('profile-password-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const oldP = document.getElementById('pwd-old').value;
-        const newP = document.getElementById('pwd-new').value;
-
-        const res = await window.skhs_auth.changePassword(currentUser.userId, oldP, newP);
-        if (res.success) {
-          currentUser = window.skhs_auth.getCurrentUser();
-          renderUserData();
-          document.getElementById('profile-password-form').reset();
-          showAlert("Account security credentials updated!", "success");
-        } else {
-          showAlert(res.message, "error");
-        }
-      });
-
-      // 3. System circular creation
-      document.getElementById('broadcast-notification-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const target = document.getElementById('ntf-target').value;
-        const title = window.skhs_security.normalizeText(document.getElementById('ntf-title').value, 120);
-        const msg = window.skhs_security.normalizeMultilineText(document.getElementById('ntf-message').value, 1000);
-        const type = document.getElementById('ntf-type').value;
-
-        if (!title || !msg) {
-          showAlert("Notification title and message are required.", "error");
-          return;
-        }
-
-        if (target === 'all') {
-          // Send to all seeded user accounts
-          const allUsers = window.skhs_db.getCollection('users');
-          allUsers.forEach(u => {
-            window.skhs_db.addNotification(u.userId, title, msg, type);
-          });
-        } else {
-          window.skhs_db.addNotification(target, title, msg, type);
-        }
-
-        // Write activity log
-        window.skhs_db.logActivity(
-          'broadcast_notification',
-          'user_management',
-          'info',
-          currentUser.userId,
-          null,
-          `Broadcasted notification "${title}" targeting: ${target}`
-        );
-
-        document.getElementById('broadcast-notification-form').reset();
-        showAlert("Broadcast circular published successfully!", "success");
-      });
-
-      // 4. Notifications Feed Renderer
-      function loadNotifications() {
-        const feedList = document.getElementById('notifications-feed-list');
-        const ntfs = window.skhs_db.find('notifications', 'userId', currentUser.userId);
-
-        // Sort descending by date
-        ntfs.sort((a, b) => b.createdAt - a.createdAt);
-        window.skhs_dom.renderNotifications(feedList, ntfs, markNotificationRead, { colorByType: true });
-      }
-
-      function markNotificationRead(id) {
-        const notification = window.skhs_db.findOne('notifications', 'notificationId', id);
-        if (!notification || notification.userId !== currentUser.userId) return;
-        window.skhs_db.update('notifications', 'notificationId', id, { isRead: true });
-        loadNotifications();
-      }
-
-      // 5. Audit Logging Viewer
-      const logModuleFilter = document.getElementById('log-filter-module');
-      const logSeverityFilter = document.getElementById('log-filter-severity');
-
-      logModuleFilter.addEventListener('change', loadAuditLogs);
-      logSeverityFilter.addEventListener('change', loadAuditLogs);
-
-      function loadAuditLogs() {
-        const tbody = document.getElementById('audit-logs-table-body');
-        let logs = window.skhs_db.getCollection('audit_logs');
-
-        // Apply filters
-        const moduleVal = logModuleFilter.value;
-        const severityVal = logSeverityFilter.value;
-
-        if (moduleVal !== 'all') {
-          logs = logs.filter(l => l.module === moduleVal);
-        }
-        if (severityVal !== 'all') {
-          logs = logs.filter(l => l.severity === severityVal);
-        }
-
-        // Sort descending by timestamp
-        logs.sort((a, b) => b.timestamp - a.timestamp);
-
-        // Use safe DOM rendering to prevent XSS (no innerHTML with raw data)
-        window.skhs_dom.renderAuditLogs(tbody, logs);
-      }
-
-      // Logout trigger
-      document.getElementById('sidebar-logout-btn').addEventListener('click', () => {
-        window.skhs_auth.logout();
-      });
-
-      // Initial page draw
-      renderUserData();
-    });
-  </script>
 </body>
 </html>
