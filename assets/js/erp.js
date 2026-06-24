@@ -1741,30 +1741,122 @@ document.addEventListener('DOMContentLoaded', () => {
             <label class="form-label">Instructions / Description</label>
             <textarea id="m-hw-desc" class="form-input" rows="3" required></textarea>
           </div>
+          <div class="form-group">
+            <label class="form-label">Reference Document / Attachment (Optional)</label>
+            <input type="file" id="m-hw-file" class="form-input" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif">
+            <small style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:0.25rem;">Max file size: 5MB</small>
+          </div>
           <button type="submit" class="btn-portal">Publish Assignment</button>
         </form>
       `);
 
-      document.getElementById('modal-homework-form').addEventListener('submit', (ev) => {
+      document.getElementById('modal-homework-form').addEventListener('submit', async (ev) => {
         ev.preventDefault();
         const activeAY = sessionStorage.getItem("skhs_active_ay");
-        const hw = window.skhs_db.insert('homework', {
-          homeworkId: "HW-" + Math.floor(700 + Math.random()*300),
-          classId: document.getElementById('m-hw-class').value,
-          subjectId: document.getElementById('m-hw-sub').value,
-          title: document.getElementById('m-hw-title').value.trim(),
-          description: document.getElementById('m-hw-desc').value.trim(),
-          dateAssigned: document.getElementById('m-hw-assd').value,
-          dueDate: document.getElementById('m-hw-dued').value,
-          completedStudents: [],
-          academicYear: activeAY
-        });
+        const submitBtn = ev.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn ? submitBtn.textContent : '';
+        
+        let attachmentUrl = '';
+        const fileInput = document.getElementById('m-hw-file');
+        const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+        
+        if (file) {
+          if (file.size > 5 * 1024 * 1024) {
+            showAlert("File is too large. Maximum size is 5MB.", "error");
+            return;
+          }
+          if (submitBtn) {
+            submitBtn.textContent = '⏳ Uploading Attachment...';
+            submitBtn.disabled = true;
+          }
+          
+          if (window.isSupabaseActive()) {
+            const homeworkId = "HW-" + Math.floor(700 + Math.random()*300);
+            const fileExtension = file.name.split('.').pop() || 'dat';
+            const filePath = `homework/${homeworkId}_${Date.now()}.${fileExtension}`;
+            
+            const uploadRes = await window.uploadFileToSupabase('school-media', filePath, file);
+            if (uploadRes.success) {
+              attachmentUrl = uploadRes.publicUrl;
+            } else {
+              showAlert("Attachment upload failed: " + uploadRes.message, "error");
+              if (submitBtn) {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+              }
+              return;
+            }
+            
+            const hw = window.skhs_db.insert('homework', {
+              homeworkId: homeworkId,
+              classId: document.getElementById('m-hw-class').value,
+              subjectId: document.getElementById('m-hw-sub').value,
+              title: document.getElementById('m-hw-title').value.trim(),
+              description: document.getElementById('m-hw-desc').value.trim(),
+              dateAssigned: document.getElementById('m-hw-assd').value,
+              dueDate: document.getElementById('m-hw-dued').value,
+              completedStudents: [],
+              attachmentUrl: attachmentUrl,
+              academicYear: activeAY
+            });
 
-        if (hw) {
-          window.skhs_db.logActivity('homework_create', 'homework', 'info', currentUser.userId, hw.homeworkId, `Posted homework: ${hw.title} in year: ${activeAY}`);
-          closeModal();
-          loadHomeworkList();
-          showAlert("Homework assignment published.");
+            if (hw) {
+              window.skhs_db.logActivity('homework_create', 'homework', 'info', currentUser.userId, hw.homeworkId, `Posted homework: ${hw.title} with attachment`);
+              closeModal();
+              loadHomeworkList();
+              showAlert("Homework assignment published.");
+            }
+          } else {
+            // LocalStorage mode mock base64/placeholder
+            const homeworkId = "HW-" + Math.floor(700 + Math.random()*300);
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+              const hw = window.skhs_db.insert('homework', {
+                homeworkId: homeworkId,
+                classId: document.getElementById('m-hw-class').value,
+                subjectId: document.getElementById('m-hw-sub').value,
+                title: document.getElementById('m-hw-title').value.trim(),
+                description: document.getElementById('m-hw-desc').value.trim(),
+                dateAssigned: document.getElementById('m-hw-assd').value,
+                dueDate: document.getElementById('m-hw-dued').value,
+                completedStudents: [],
+                attachmentUrl: evt.target.result, // base64 mock
+                academicYear: activeAY
+              });
+              if (hw) {
+                window.skhs_db.logActivity('homework_create', 'homework', 'info', currentUser.userId, hw.homeworkId, `Posted homework: ${hw.title} with attachment (local)`);
+                closeModal();
+                loadHomeworkList();
+                showAlert("Homework assignment published.");
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        } else {
+          // Normal publish without file
+          if (submitBtn) {
+            submitBtn.textContent = 'Publishing...';
+            submitBtn.disabled = true;
+          }
+          const hw = window.skhs_db.insert('homework', {
+            homeworkId: "HW-" + Math.floor(700 + Math.random()*300),
+            classId: document.getElementById('m-hw-class').value,
+            subjectId: document.getElementById('m-hw-sub').value,
+            title: document.getElementById('m-hw-title').value.trim(),
+            description: document.getElementById('m-hw-desc').value.trim(),
+            dateAssigned: document.getElementById('m-hw-assd').value,
+            dueDate: document.getElementById('m-hw-dued').value,
+            completedStudents: [],
+            attachmentUrl: '',
+            academicYear: activeAY
+          });
+
+          if (hw) {
+            window.skhs_db.logActivity('homework_create', 'homework', 'info', currentUser.userId, hw.homeworkId, `Posted homework: ${hw.title} in year: ${activeAY}`);
+            closeModal();
+            loadHomeworkList();
+            showAlert("Homework assignment published.");
+          }
         }
       });
     });
@@ -1785,12 +1877,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const totalStudents = students.filter(s => s.classId === hw.classId).length;
       const countCompleted = hw.completedStudents.length;
 
+      const titleHtml = hw.attachmentUrl 
+        ? `<strong>${hw.title}</strong><br><a href="${hw.attachmentUrl}" target="_blank" style="font-size: 0.75rem; color: var(--portal-accent); display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem; text-decoration: none;">📎 View Attachment</a>`
+        : `<strong>${hw.title}</strong>`;
+
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${hw.homeworkId}</td>
         <td>${cls ? cls.name : hw.classId}</td>
         <td>${sub ? sub.name : hw.subjectId}</td>
-        <td><strong>${hw.title}</strong></td>
+        <td>${titleHtml}</td>
         <td>${hw.dateAssigned}</td>
         <td>${hw.dueDate}</td>
         <td>${countCompleted} / ${totalStudents} Submitted</td>
@@ -2669,12 +2765,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Save profile contact edits
-  document.getElementById('profile-details-form').addEventListener('submit', (e) => {
+  document.getElementById('profile-details-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('profile-name').value.trim();
     const phone = document.getElementById('profile-phone').value.trim();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.textContent : '';
+    if (submitBtn) {
+      submitBtn.textContent = 'Saving...';
+      submitBtn.disabled = true;
+    }
 
-    const res = window.skhs_auth.updateProfile(currentUser.userId, name, phone, null);
+    const res = await window.skhs_auth.updateProfile(currentUser.userId, name, phone, null);
+    if (submitBtn) {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+
     if (res.success) {
       currentUser = res.user;
       renderUserData();
@@ -2695,10 +2802,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Show loading spinner/overlay
+    const avatarPreview = document.getElementById('profile-avatar-preview');
+    const originalOpacity = avatarPreview ? avatarPreview.style.opacity : '';
+    if (avatarPreview) avatarPreview.style.opacity = '0.5';
+    const uploadLabel = document.querySelector('.photo-upload-label');
+    const originalLabelText = uploadLabel ? uploadLabel.textContent : '';
+    if (uploadLabel) uploadLabel.textContent = '⏳ Uploading...';
+
     const reader = new FileReader();
-    reader.onload = function(evt) {
+    reader.onload = async function(evt) {
       const base64Image = evt.target.result;
-      const res = window.skhs_auth.updateProfile(currentUser.userId, null, null, base64Image);
+      const res = await window.skhs_auth.updateProfile(currentUser.userId, null, null, base64Image);
+      
+      if (avatarPreview) avatarPreview.style.opacity = originalOpacity;
+      if (uploadLabel) uploadLabel.textContent = originalLabelText;
+
       if (res.success) {
         currentUser = res.user;
         renderUserData();

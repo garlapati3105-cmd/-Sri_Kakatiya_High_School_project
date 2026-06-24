@@ -123,6 +123,7 @@ CREATE TABLE IF NOT EXISTS public.homework (
   date_assigned DATE NOT NULL,
   due_date DATE NOT NULL,
   completed_students TEXT, -- Comma separated student ids
+  attachment_url TEXT,
   academic_year TEXT REFERENCES public.academic_years(ay_id) ON DELETE CASCADE
 );
 
@@ -361,7 +362,7 @@ INSERT INTO auth.users (
     'a0e0a9bc-3001-4001-8001-000000000001',
     'authenticated',
     'authenticated',
-    'admin@srikakatiya.com',
+    'admin@srikakatiya.local',
     -- Hashed value for 'School@123'
     '$2a$10$tZg/e/B86h00zL4LhFq2Aeq.mGg9f3p1WlT5d15N0O9S5yV1uWvKu',
     NOW(), NULL, NULL,
@@ -374,7 +375,7 @@ INSERT INTO auth.users (
     'a0e0a9bc-3001-4001-8001-000000000002',
     'authenticated',
     'authenticated',
-    'teacher@srikakatiya.com',
+    'teacher@srikakatiya.local',
     -- Hashed value for 'School@456'
     '$2a$10$sX8lW1z60.rS.2L3A8Kq9ep8i7K6p3c5WlT5d15N0O9S5yV1uWvKu',
     NOW(), NULL, NULL,
@@ -387,7 +388,7 @@ INSERT INTO auth.users (
     'a0e0a9bc-3001-4001-8001-000000000003',
     'authenticated',
     'authenticated',
-    'parent@srikakatiya.com',
+    'parent@srikakatiya.local',
     -- Hashed value for 'School@789'
     '$2a$10$sX8lW1z60.rS.2L3A8Kq9ep8i7K6p3c5WlT5d15N0O9S5yV1uWvKu',
     NOW(), NULL, NULL,
@@ -400,7 +401,7 @@ INSERT INTO auth.users (
     'a0e0a9bc-3001-4001-8001-000000000004',
     'authenticated',
     'authenticated',
-    'student@srikakatiya.com',
+    'student@srikakatiya.local',
     -- Hashed value for 'School@321'
     '$2a$10$sX8lW1z60.rS.2L3A8Kq9ep8i7K6p3c5WlT5d15N0O9S5yV1uWvKu',
     NOW(), NULL, NULL,
@@ -413,8 +414,8 @@ ON CONFLICT (id) DO NOTHING;
 -- Populate public.users with the respective accounts manually to ensure default role permissions map
 INSERT INTO public.users (id, full_name, email, role, mobile_number, status, account_active, is_default_password)
 VALUES
-  ('a0e0a9bc-3001-4001-8001-000000000001', 'Swathi Reddy', 'admin@srikakatiya.com', 'admin', '9100177682', 'active', TRUE, FALSE),
-  ('a0e0a9bc-3001-4001-8001-000000000002', 'K. Raghupathi', 'teacher@srikakatiya.com', 'teacher', '9848022338', 'active', TRUE, TRUE),
-  ('a0e0a9bc-3001-4001-8001-000000000003', 'Madhusudhan Rao', 'parent@srikakatiya.com', 'parent', '9988776655', 'active', TRUE, TRUE),
-  ('a0e0a9bc-3001-4001-8001-000000000004', 'K. Sai Kiran', 'student@srikakatiya.com', 'student', '9900112233', 'active', TRUE, TRUE)
+  ('a0e0a9bc-3001-4001-8001-000000000001', 'Swathi Reddy', 'admin@srikakatiya.local', 'admin', '9100177682', 'active', TRUE, FALSE),
+  ('a0e0a9bc-3001-4001-8001-000000000002', 'K. Raghupathi', 'teacher@srikakatiya.local', 'teacher', '9848022338', 'active', TRUE, TRUE),
+  ('a0e0a9bc-3001-4001-8001-000000000003', 'Madhusudhan Rao', 'parent@srikakatiya.local', 'parent', '9988776655', 'active', TRUE, TRUE),
+  ('a0e0a9bc-3001-4001-8001-000000000004', 'K. Sai Kiran', 'student@srikakatiya.local', 'student', '9900112233', 'active', TRUE, TRUE)
 ON CONFLICT (id) DO NOTHING;

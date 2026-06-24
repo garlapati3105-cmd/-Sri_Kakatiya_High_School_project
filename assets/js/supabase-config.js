@@ -51,3 +51,30 @@ window.getSupabaseClient = function() {
   }
   return supabaseClient;
 };
+
+window.uploadFileToSupabase = async function(bucketName, path, file) {
+  if (!window.isSupabaseActive()) {
+    console.error("[DATABASE] Supabase is not active. Cannot upload file.");
+    return { success: false, message: "Supabase client is not active." };
+  }
+  try {
+    const supabase = window.getSupabaseClient();
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .upload(path, file, { upsert: true, contentType: file.type });
+
+    if (error) {
+      console.error("[DATABASE] File upload failed:", error);
+      return { success: false, message: error.message };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(path);
+
+    return { success: true, publicUrl: publicUrlData.publicUrl };
+  } catch (err) {
+    console.error("[DATABASE] Unexpected error during file upload:", err);
+    return { success: false, message: err.message };
+  }
+};

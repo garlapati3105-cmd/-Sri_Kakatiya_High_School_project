@@ -118,10 +118,10 @@ All data written to storage is sanitized through:
 
 | Role | Email | Password |
 |------|-------|----------|
-| 🛠️ Admin | `admin@srikakatiya.com` | `School@123` |
-| 👩‍🏫 Teacher | `teacher@srikakatiya.com` | `School@456` |
-| 👨‍👩‍👧 Parent | `parent@srikakatiya.com` | `School@789` |
-| 🎓 Student | `student@srikakatiya.com` | `School@321` |
+| 🛠️ Admin | `admin@srikakatiya.local` | `School@123` |
+| 👩‍🏫 Teacher | `teacher@srikakatiya.local` | `School@456` |
+| 👨‍👩‍👧 Parent | `parent@srikakatiya.local` | `School@789` |
+| 🎓 Student | `student@srikakatiya.local` | `School@321` |
 
 ---
 

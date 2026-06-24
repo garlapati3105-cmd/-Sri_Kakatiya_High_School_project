@@ -388,7 +388,7 @@ window.migrateAuthToSupabase = async function() {
   
   console.log("[MIGRATOR] Processing Students...");
   for (const s of students) {
-    let email = s.email || `${s.studentId.toLowerCase()}@srikakatiya.com`;
+    let email = s.email || `${s.studentId.toLowerCase()}@srikakatiya.local`;
     await processUser(email, 'School@321', 'student', s.fullName, s.phone);
   }
   
@@ -480,7 +480,7 @@ window.registerMigratedMembersAuth = async function() {
   // 3. Students
   const students = localGet('students');
   for (const s of students) {
-    const email = `${s.studentId.toLowerCase()}@srikakatiya.com`;
+    const email = `${s.studentId.toLowerCase()}@srikakatiya.local`;
     try {
       console.log(`[MIGRATOR] Registering Auth for student: ${email}`);
       const { data, error } = await tempSupabase.auth.signUp({
@@ -558,7 +558,7 @@ window.generateMigrationSQL = function() {
 
   students.forEach(s => {
     const uuid = crypto.randomUUID();
-    const email = `${s.studentId.toLowerCase()}@srikakatiya.com`;
+    const email = `${s.studentId.toLowerCase()}@srikakatiya.local`;
     memberList.push({
       uuid,
       email,

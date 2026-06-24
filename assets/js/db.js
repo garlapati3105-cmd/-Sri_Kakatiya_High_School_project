@@ -167,7 +167,7 @@ function initDatabase() {
       {
         userId: "USR-001",
         fullName: "Swathi Reddy",
-        email: "admin@srikakatiya.com",
+        email: "admin@srikakatiya.local",
         mobileNumber: "9100177682",
         role: "admin",
         password: SEED_PASSWORDS.admin,
@@ -183,7 +183,7 @@ function initDatabase() {
       {
         userId: "USR-002",
         fullName: "K. Raghupathi",
-        email: "teacher@srikakatiya.com",
+        email: "teacher@srikakatiya.local",
         mobileNumber: "9848022338",
         role: "teacher",
         password: SEED_PASSWORDS.teacher,
@@ -199,7 +199,7 @@ function initDatabase() {
       {
         userId: "USR-003",
         fullName: "Madhusudhan Rao",
-        email: "parent@srikakatiya.com",
+        email: "parent@srikakatiya.local",
         mobileNumber: "9988776655",
         role: "parent",
         password: SEED_PASSWORDS.parent,
@@ -215,7 +215,7 @@ function initDatabase() {
       {
         userId: "USR-004",
         fullName: "K. Sai Kiran",
-        email: "student@srikakatiya.com",
+        email: "student@srikakatiya.local",
         mobileNumber: "9900112233",
         role: "student",
         password: SEED_PASSWORDS.student,
@@ -231,7 +231,7 @@ function initDatabase() {
       {
         userId: "USR-005",
         fullName: "Smt. G. Lakshmi",
-        email: "lakshmi.g@srikakatiya.com",
+        email: "lakshmi.g@srikakatiya.local",
         mobileNumber: "9123456780",
         role: "teacher",
         password: SEED_PASSWORDS.teacher,
@@ -263,7 +263,7 @@ function initDatabase() {
       {
         userId: "USR-007",
         fullName: "M. Preethi",
-        email: "preethi@srikakatiya.com",
+        email: "preethi@srikakatiya.local",
         mobileNumber: "9876543210",
         role: "student",
         password: SEED_PASSWORDS.student,
@@ -349,7 +349,7 @@ function initDatabase() {
       {
         schoolName: "Sri Kakatiya High School",
         schoolLogo: "",
-        contactInfo: "Ph: +91 9100177682, Email: contact@srikakatiya.com",
+        contactInfo: "Ph: +91 9100177682, Email: contact@srikakatiya.local",
         principalInfo: "Dr. Swathi Reddy",
         passwordPolicy: { minLength: 8, requireNumbers: true },
         sessionTimeout: 30
@@ -362,7 +362,7 @@ function initDatabase() {
   const parents = safeParseArray(localStorage.getItem(getStorageKey('parents')));
   if (parents.length === 0) {
     const seedParents = [
-      { parentId: "PRN-3001", fullName: "Madhusudhan Rao", mobileNumber: "9988776655", email: "parent@srikakatiya.com", occupation: "Business", linkedStudents: ["STD-1001"] },
+      { parentId: "PRN-3001", fullName: "Madhusudhan Rao", mobileNumber: "9988776655", email: "parent@srikakatiya.local", occupation: "Business", linkedStudents: ["STD-1001"] },
       { parentId: "PRN-3002", fullName: "Venkata Ramanappa", mobileNumber: "9876543210", email: "ramanappa@gmail.com", occupation: "Agriculture", linkedStudents: ["STD-1002"] },
       { parentId: "PRN-3003", fullName: "M. Srinivasa Rao", mobileNumber: "9440123456", email: "srinivas@yahoo.com", occupation: "Engineer", linkedStudents: ["STD-1003", "STD-1004"] }
     ];
@@ -373,10 +373,10 @@ function initDatabase() {
   const teachers = safeParseArray(localStorage.getItem(getStorageKey('teachers')));
   if (teachers.length === 0) {
     const seedTeachers = [
-      { teacherId: "TCH-2001", fullName: "K. Raghupathi", qualification: "M.Sc, B.Ed", subject: "Mathematics", assignedClasses: ["class-10", "class-9"], email: "teacher@srikakatiya.com", phone: "9848022338", experience: "12 Years", status: "Active" },
-      { teacherId: "TCH-2002", fullName: "Smt. G. Lakshmi", qualification: "M.A, B.Ed", subject: "English", assignedClasses: ["class-8", "class-7"], email: "lakshmi.g@srikakatiya.com", phone: "9123456780", experience: "8 Years", status: "Active" },
-      { teacherId: "TCH-2003", fullName: "Sri P. Kumar", qualification: "M.Sc (Physics)", subject: "Science", assignedClasses: ["class-10", "class-8"], email: "kumar.p@srikakatiya.com", phone: "9000123456", experience: "10 Years", status: "Active" },
-      { teacherId: "TCH-2004", fullName: "Smt. T. Radha", qualification: "B.A, B.Ed", subject: "Social Studies", assignedClasses: ["class-9", "class-6"], email: "radha.t@srikakatiya.com", phone: "9885566778", experience: "6 Years", status: "Active" }
+      { teacherId: "TCH-2001", fullName: "K. Raghupathi", qualification: "M.Sc, B.Ed", subject: "Mathematics", assignedClasses: ["class-10", "class-9"], email: "teacher@srikakatiya.local", phone: "9848022338", experience: "12 Years", status: "Active" },
+      { teacherId: "TCH-2002", fullName: "Smt. G. Lakshmi", qualification: "M.A, B.Ed", subject: "English", assignedClasses: ["class-8", "class-7"], email: "lakshmi.g@srikakatiya.local", phone: "9123456780", experience: "8 Years", status: "Active" },
+      { teacherId: "TCH-2003", fullName: "Sri P. Kumar", qualification: "M.Sc (Physics)", subject: "Science", assignedClasses: ["class-10", "class-8"], email: "kumar.p@srikakatiya.local", phone: "9000123456", experience: "10 Years", status: "Active" },
+      { teacherId: "TCH-2004", fullName: "Smt. T. Radha", qualification: "B.A, B.Ed", subject: "Social Studies", assignedClasses: ["class-9", "class-6"], email: "radha.t@srikakatiya.local", phone: "9885566778", experience: "6 Years", status: "Active" }
     ];
     localStorage.setItem(getStorageKey('teachers'), JSON.stringify(seedTeachers));
   }
@@ -799,7 +799,7 @@ const db = {
           if (collectionName === 'students') {
             role = 'student';
             defaultPassword = 'School@321';
-            email = email || `${record.studentId.toLowerCase()}@srikakatiya.com`;
+            email = email || `${record.studentId.toLowerCase()}@srikakatiya.local`;
           } else if (collectionName === 'teachers') {
             role = 'teacher';
             defaultPassword = 'School@456';

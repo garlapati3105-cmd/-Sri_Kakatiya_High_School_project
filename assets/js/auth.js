@@ -517,7 +517,7 @@ const auth = {
   },
 
   // Update contact details and profile photo
-  updateProfile(userId, fullName, mobileNumber, profilePhoto) {
+  async updateProfile(userId, fullName, mobileNumber, profilePhoto) {
     const user = this.getCurrentUser();
     if (!user || user.userId !== userId) {
       return { success: false, message: "You can only update your own profile." };
@@ -552,54 +552,41 @@ const auth = {
       if (updates.fullName) dbUpdates.full_name = updates.fullName;
       if (updates.mobileNumber) dbUpdates.mobile_number = updates.mobileNumber;
 
-      // Handle Storage Upload in background
+      // Handle Storage Upload
       if (profilePhoto !== null && profilePhoto !== undefined) {
         if (!window.skhs_security.isAllowedImageDataUrl(profilePhoto)) {
           return { success: false, message: "Profile photo must be a PNG, JPG, WebP, or GIF under 1MB." };
         }
         
-        // Update local memory cache avatar immediately with base64 for fast feedback
-        updatedUser.profilePhoto = profilePhoto;
-        session.userProfile = updatedUser;
-        saveActiveSession(session);
-        
-        // Background upload
-        setTimeout(async () => {
-          const fileData = dataURLtoBlob(profilePhoto);
-          if (fileData) {
-            const fileExtension = fileData.mime.split('/')[1] || 'png';
-            const filePath = `photos/${userId}.${fileExtension}`;
-            
-            const { error: uploadError } = await supabase.storage
-              .from('school-media')
-              .upload(filePath, fileData.blob, { upsert: true, contentType: fileData.mime });
+        const fileData = dataURLtoBlob(profilePhoto);
+        if (fileData) {
+          const fileExtension = fileData.mime.split('/')[1] || 'png';
+          const filePath = `photos/${userId}.${fileExtension}`;
+          
+          const { error: uploadError } = await supabase.storage
+            .from('school-media')
+            .upload(filePath, fileData.blob, { upsert: true, contentType: fileData.mime });
 
-            if (!uploadError) {
-              const { data: publicUrlData } = supabase.storage
-                .from('school-media')
-                .getPublicUrl(filePath);
-
-              dbUpdates.profile_photo = publicUrlData.publicUrl;
-              
-              // Update DB and then session storage cache
-              await supabase.from('users').update({ profile_photo: publicUrlData.publicUrl }).eq('id', userId);
-              
-              const currentSession = getActiveSession();
-              if (currentSession && currentSession.userProfile && currentSession.userId === userId) {
-                currentSession.userProfile.profilePhoto = publicUrlData.publicUrl;
-                saveActiveSession(currentSession);
-              }
-            }
+          if (uploadError) {
+            return { success: false, message: "Failed to upload image: " + uploadError.message };
           }
-        }, 10);
+
+          const { data: publicUrlData } = supabase.storage
+            .from('school-media')
+            .getPublicUrl(filePath);
+
+          dbUpdates.profile_photo = publicUrlData.publicUrl;
+          updatedUser.profilePhoto = publicUrlData.publicUrl;
+        }
       }
 
-      // Update name and phone in background
+      // Update name and phone/photo in DB
       if (Object.keys(dbUpdates).length > 0) {
-        supabase.from('users').update(dbUpdates).eq('id', userId)
-          .then(({ error }) => {
-            if (error) console.error("[AUTH] Background profile update failed:", error);
-          });
+        const { error } = await supabase.from('users').update(dbUpdates).eq('id', userId);
+        if (error) {
+          console.error("[AUTH] Profile update failed:", error);
+          return { success: false, message: "Database update failed: " + error.message };
+        }
       }
 
       session.userProfile = updatedUser;
