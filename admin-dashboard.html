@@ -1225,6 +1225,38 @@
               <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1.5rem;">Clears all custom additions, registrations, attendance registers, fee invoices, and restores the environment back to fresh seed data.</p>
               <button class="btn-portal" id="btn-db-reset-demo" style="max-width: 250px; background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border: none;">Factory Reset Demo Data</button>
             </div>
+
+            <!-- Database Seeder & Auth Generator Card -->
+            <div class="portal-card" style="grid-column: span 2; border-color: rgba(16, 185, 129, 0.3);">
+              <h3 class="card-title" style="color: var(--portal-success);">🌱 Demo Database Seeder & Auth Generator</h3>
+              <p style="font-size: 0.8rem; color: var(--portal-text-muted); margin-bottom: 1.5rem;">
+                Generates a complete, realistic production-grade school environment containing 200 students, 150-170 parents, 25 teachers, and thousands of relational records (attendance, marks, homework, fees, study materials, audit logs).
+              </p>
+              
+              <div id="seeder-status-panel" style="background: rgba(15, 23, 42, 0.4); padding: 1.25rem; border-radius: 10px; margin-bottom: 1.5rem; border: 1px solid var(--portal-border);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                  <span><strong>Status:</strong> <span id="seeder-status-module">Ready</span></span>
+                  <span id="seeder-status-percent">0%</span>
+                </div>
+                <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; margin-bottom: 0.75rem;">
+                  <div id="seeder-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981 0%, #34d399 100%); transition: width 0.3s ease;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; font-size: 0.75rem; color: var(--portal-text-muted);">
+                  <div>Completed: <strong id="seeder-stat-completed" style="color: var(--portal-text-main);">0</strong></div>
+                  <div>Failed: <strong id="seeder-stat-failed" style="color: var(--portal-text-main);">0</strong></div>
+                  <div>Elapsed: <strong id="seeder-stat-elapsed" style="color: var(--portal-text-main);">0s</strong></div>
+                  <div>ETA: <strong id="seeder-stat-eta" style="color: var(--portal-text-main);">0s</strong></div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn-portal" id="btn-seed-run" style="width: auto; padding: 0.5rem 1rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none;">Seed Complete Database</button>
+                <button class="btn-portal" id="btn-seed-reseed" style="width: auto; padding: 0.5rem 1rem;">Re-seed Database</button>
+                <button class="btn-portal" id="btn-seed-delete" style="width: auto; padding: 0.5rem 1rem; background: #dc2626; border: none;">Delete Demo Data</button>
+                <button class="btn-portal" id="btn-seed-export-sql" style="width: auto; padding: 0.5rem 1rem; background: #2563eb; border: none;">Export SQL Auth Migration</button>
+                <button class="btn-portal" id="btn-seed-download-csv" style="width: auto; padding: 0.5rem 1rem; background: #4f46e5; border: none;" disabled>Download Credentials CSV</button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1532,6 +1564,7 @@
   <script src="assets/js/db.js???v=1782310847156"></script>
   <script src="assets/js/auth.js???v=1782310847156"></script>
   <script src="assets/js/migrate_data_to_supabase.js???v=1782310847156"></script>
+  <script src="assets/js/seeder.js???v=1782310847156"></script>
 
   <!-- ERP Core Controller -->
   <script src="assets/js/erp.js?v=999"></script>

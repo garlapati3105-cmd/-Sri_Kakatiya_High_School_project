@@ -3974,6 +3974,115 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function initBackupRestoreModule() {
     calculateDbSize();
+    initSeederControls();
+  }
+
+  function initSeederControls() {
+    const btnSeedRun = document.getElementById('btn-seed-run');
+    const btnSeedReseed = document.getElementById('btn-seed-reseed');
+    const btnSeedDelete = document.getElementById('btn-seed-delete');
+    const btnSeedExportSql = document.getElementById('btn-seed-export-sql');
+    const btnSeedDownloadCsv = document.getElementById('btn-seed-download-csv');
+
+    const progressFill = document.getElementById('seeder-progress-bar');
+    const statusModule = document.getElementById('seeder-status-module');
+    const statusPercent = document.getElementById('seeder-status-percent');
+    const statCompleted = document.getElementById('seeder-stat-completed');
+    const statFailed = document.getElementById('seeder-stat-failed');
+    const statElapsed = document.getElementById('seeder-stat-elapsed');
+    const statEta = document.getElementById('seeder-stat-eta');
+
+    const updateUI = (state) => {
+      if (progressFill) progressFill.style.width = state.progress + "%";
+      if (statusModule) statusModule.textContent = state.currentModule;
+      if (statusPercent) statusPercent.textContent = state.progress + "%";
+      if (statCompleted) statCompleted.textContent = state.completed;
+      if (statFailed) statFailed.textContent = state.failed;
+      if (statElapsed) statElapsed.textContent = state.elapsed + "s";
+      if (statEta) statEta.textContent = state.eta + "s";
+
+      if (state.progress === 100) {
+        if (btnSeedDownloadCsv) btnSeedDownloadCsv.disabled = false;
+      }
+    };
+
+    if (btnSeedRun) {
+      btnSeedRun.onclick = async () => {
+        if (confirm("Proceed to seed the complete production-grade school database?")) {
+          updateUI({ progress: 0, currentModule: "Starting...", completed: 0, failed: 0, elapsed: 0, eta: 0 });
+          const res = await window.seedProductionDatabase(updateUI);
+          if (res.success) {
+            showAlert("Database successfully seeded!");
+            calculateDbSize();
+          } else {
+            showAlert("Seeding failed: " + res.error, "error");
+          }
+        }
+      };
+    }
+
+    if (btnSeedReseed) {
+      btnSeedReseed.onclick = async () => {
+        if (confirm("This will clear all current records and re-seed the entire database. Proceed?")) {
+          updateUI({ progress: 0, currentModule: "Starting...", completed: 0, failed: 0, elapsed: 0, eta: 0 });
+          const res = await window.seedProductionDatabase(updateUI);
+          if (res.success) {
+            showAlert("Database successfully re-seeded!");
+            calculateDbSize();
+          } else {
+            showAlert("Re-seeding failed: " + res.error, "error");
+          }
+        }
+      };
+    }
+
+    if (btnSeedDelete) {
+      btnSeedDelete.onclick = async () => {
+        if (confirm("Are you sure you want to delete all demo data? This will clear all collections.")) {
+          if (window.isSupabaseActive()) {
+            const supabase = window.getSupabaseClient();
+            const collections = ['study_materials', 'audit_logs', 'notifications', 'leave_requests', 'calendar_events', 'promotions', 'fees', 'marks', 'homework', 'exams', 'attendance', 'students', 'subjects', 'parents', 'classes', 'teachers', 'academic_years'];
+            for (const col of collections) {
+              await supabase.from(col).delete().neq('material_id', 'placeholder').is('material_id', null);
+              await supabase.from(col).delete().neq('log_id', 'placeholder').is('log_id', null);
+              await supabase.from(col).delete().neq('notification_id', 'placeholder').is('notification_id', null);
+              await supabase.from(col).delete().neq('leave_id', 'placeholder').is('leave_id', null);
+              await supabase.from(col).delete().neq('event_id', 'placeholder').is('event_id', null);
+              await supabase.from(col).delete().neq('promo_id', 'placeholder').is('promo_id', null);
+              await supabase.from(col).delete().neq('fee_id', 'placeholder').is('fee_id', null);
+              await supabase.from(col).delete().neq('mark_id', 'placeholder').is('mark_id', null);
+              await supabase.from(col).delete().neq('homework_id', 'placeholder').is('homework_id', null);
+              await supabase.from(col).delete().neq('exam_id', 'placeholder').is('exam_id', null);
+              await supabase.from(col).delete().neq('attendance_id', 'placeholder').is('attendance_id', null);
+              await supabase.from(col).delete().neq('student_id', 'placeholder').is('student_id', null);
+              await supabase.from(col).delete().neq('subject_id', 'placeholder').is('subject_id', null);
+              await supabase.from(col).delete().neq('parent_id', 'placeholder').is('parent_id', null);
+              await supabase.from(col).delete().neq('class_id', 'placeholder').is('class_id', null);
+              await supabase.from(col).delete().neq('teacher_id', 'placeholder').is('teacher_id', null);
+              await supabase.from(col).delete().neq('ay_id', 'placeholder').is('ay_id', null);
+            }
+          } else {
+            const collections = ['users', 'audit_logs', 'notifications', 'messages', 'students', 'teachers', 'parents', 'classes', 'subjects', 'attendance', 'exams', 'marks', 'homework', 'fees', 'settings', 'academic_years', 'promotions', 'leave_requests', 'calendar_events', 'study_materials'];
+            collections.forEach(col => localStorage.setItem("skhs_db_" + col, JSON.stringify([])));
+          }
+          showAlert("All demo data deleted.");
+          calculateDbSize();
+          updateUI({ progress: 0, currentModule: "Deleted All Data", completed: 0, failed: 0, elapsed: 0, eta: 0 });
+        }
+      };
+    }
+
+    if (btnSeedExportSql) {
+      btnSeedExportSql.onclick = () => {
+        window.exportSQLAuthMigration();
+      };
+    }
+
+    if (btnSeedDownloadCsv) {
+      btnSeedDownloadCsv.onclick = () => {
+        window.downloadDemoCredentialsCSV();
+      };
+    }
   }
 
   function calculateDbSize() {
