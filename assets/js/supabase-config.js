@@ -3,8 +3,8 @@
 //  Initializes Supabase connection with LocalStorage fallbacks
 // ============================================================
 
-const SUPABASE_URL = "https://naozdmidwaiumvuotgoc.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_BEVWbRlU2GjLwLpcdK1PYA_Vwt0sQbT";
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
 
 let supabaseClient = null;
 let isSupabaseActiveFlag = false;
@@ -13,11 +13,10 @@ function checkSupabaseConfiguration() {
   const isPlaceholderUrl = !SUPABASE_URL || SUPABASE_URL.includes("YOUR_SUPABASE_URL");
   const isPlaceholderKey = !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_ANON_KEY");
   
-  if (isPlaceholderUrl || isPlaceholderKey) {
-    console.warn("[DATABASE] Supabase is not configured yet. Falling back to LocalStorage mode.");
-    isSupabaseActiveFlag = false;
-    return false;
-  }
+  // Force local storage mode for testing by short-circuiting
+  console.warn("[DATABASE] Supabase is forced OFF. Falling back to LocalStorage mode.");
+  isSupabaseActiveFlag = false;
+  return false;
   
   try {
     if (window.supabase && typeof window.supabase.createClient === 'function') {

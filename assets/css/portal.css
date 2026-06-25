@@ -22,6 +22,7 @@
   /* Theme Defaults (Light Theme) */
   --portal-bg:            #f3f4f6;
   --portal-card-bg:       #ffffff;
+  --portal-bg-card:       #ffffff; /* alias for portal-card-bg, used in JS */
   --portal-sidebar-bg:    #0a2d6e;
   --portal-sidebar-text:  #e2e8f0;
   --portal-text-main:     #111827;
@@ -39,6 +40,7 @@
 .dark-theme {
   --portal-bg:            #0b0f19;
   --portal-card-bg:       #151c2c;
+  --portal-bg-card:       #151c2c; /* alias */
   --portal-sidebar-bg:    #0d1322;
   --portal-sidebar-text:  #94a3b8;
   --portal-text-main:     #f3f4f6;
@@ -1622,6 +1624,151 @@
     color: #1a1a1a !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+}
+
+/* Responsive Mobile Styles */
+@media (max-width: 991px) {
+  .menu-mobile-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--portal-text-main);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+  .menu-mobile-toggle:hover {
+    background-color: var(--portal-bg);
+  }
+  .portal-sidebar {
+    left: -280px;
+    transition: left 0.3s ease-in-out;
+    width: 260px;
+    z-index: 200;
+  }
+  .portal-sidebar.active-mobile {
+    left: 0;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.3);
+  }
+  /* Overlay backdrop when mobile menu is open */
+  .portal-sidebar.active-mobile::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 260px;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+  }
+  .portal-main {
+    margin-left: 0 !important;
+  }
+  .portal-sidebar.collapsed + .portal-main {
+    margin-left: 0 !important;
+  }
+  .portal-header {
+    padding: 0 1rem;
+    gap: 0.5rem;
+  }
+  .portal-content {
+    padding: 1rem;
+  }
+  /* Collapse multi-column grids to single column on mobile */
+  .portal-grid-3,
+  .portal-grid-2,
+  .portal-grid-main-side {
+    grid-template-columns: 1fr !important;
+  }
+  .completion-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .portal-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  /* Make tables horizontally scrollable */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Header adjustments for mobile */
+  .header-title {
+    font-size: 1rem;
+  }
+  .widget-name {
+    display: none;
+  }
+  .widget-role {
+    display: none;
+  }
+  .user-profile-widget {
+    gap: 0;
+  }
+  /* Stack banner info vertically on mobile */
+  #welcome-banner .portal-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+  /* Better profile photo uploader on mobile */
+  .profile-avatar-large {
+    width: 90px;
+    height: 90px;
+  }
+  /* Reduce quick actions grid column width */
+  #tab-dashboard [style*="grid-template-columns: repeat(auto-fill, minmax(150px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Checklist grid single column */
+  .checklist-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Extra small devices (phones < 480px) */
+@media (max-width: 480px) {
+  .portal-content {
+    padding: 0.75rem;
+  }
+  .portal-card {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+  .card-title {
+    font-size: 1rem;
+  }
+  #welcome-banner {
+    padding: 1.25rem !important;
+  }
+  #banner-greeting {
+    font-size: 1.4rem !important;
+  }
+  .portal-header {
+    padding: 0 0.75rem;
+    height: 60px;
+  }
+  .portal-sidebar {
+    width: 240px;
+    left: -240px;
+  }
+  .portal-sidebar.active-mobile::after {
+    left: 240px;
+  }
+  .btn-portal {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+  }
+  /* KPI cards 2 column layout */
+  #tab-dashboard [style*="minmax(180px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 

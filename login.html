@@ -103,39 +103,8 @@
 
       <div class="demo-accounts-panel" style="max-height: 320px; overflow-y: auto; padding-right: 0.5rem;">
         <div class="demo-title">🔑 Quick Reference Accounts (Click to Autofill)</div>
-        <div class="demo-grid">
-          <!-- Admins -->
-          <div class="demo-row" onclick="document.getElementById('login-email').value='admin@srikakatiya.local'; document.getElementById('login-password').value='School@123'; document.querySelector('.role-btn[data-role=admin]').click();" style="border-left: 3px solid var(--portal-warning);">
-            <div><span class="demo-role" style="color:var(--portal-warning);">Admin</span> <span style="font-weight:600;">(Swathi Reddy)</span></div>
-            <span class="demo-credentials">admin@srikakatiya.local / School@123</span>
-          </div>
-          <!-- Teachers -->
-          <div class="demo-row" onclick="document.getElementById('login-email').value='teacher@srikakatiya.local'; document.getElementById('login-password').value='School@456'; document.querySelector('.role-btn[data-role=teacher]').click();" style="border-left: 3px solid var(--portal-info);">
-            <div><span class="demo-role" style="color:var(--portal-info);">Teacher</span> <span style="font-weight:600;">(K. Raghupathi)</span></div>
-            <span class="demo-credentials">teacher@srikakatiya.local / School@456</span>
-          </div>
-          <div class="demo-row" onclick="document.getElementById('login-email').value='lakshmi.g@srikakatiya.local'; document.getElementById('login-password').value='School@456'; document.querySelector('.role-btn[data-role=teacher]').click();" style="border-left: 3px solid var(--portal-info);">
-            <div><span class="demo-role" style="color:var(--portal-info);">Teacher</span> <span style="font-weight:600;">(Smt. G. Lakshmi)</span></div>
-            <span class="demo-credentials">lakshmi.g@srikakatiya.local / School@456</span>
-          </div>
-          <!-- Parents -->
-          <div class="demo-row" onclick="document.getElementById('login-email').value='parent@srikakatiya.local'; document.getElementById('login-password').value='School@789'; document.querySelector('.role-btn[data-role=parent]').click();" style="border-left: 3px solid #8b5cf6;">
-            <div><span class="demo-role" style="color:#8b5cf6;">Parent</span> <span style="font-weight:600;">(Madhusudhan Rao)</span></div>
-            <span class="demo-credentials">parent@srikakatiya.local / School@789</span>
-          </div>
-          <div class="demo-row" onclick="document.getElementById('login-email').value='ramanappa@gmail.com'; document.getElementById('login-password').value='School@789'; document.querySelector('.role-btn[data-role=parent]').click();" style="border-left: 3px solid #8b5cf6;">
-            <div><span class="demo-role" style="color:#8b5cf6;">Parent</span> <span style="font-weight:600;">(Venkata Ramanappa)</span></div>
-            <span class="demo-credentials">ramanappa@gmail.com / School@789</span>
-          </div>
-          <!-- Students -->
-          <div class="demo-row" onclick="document.getElementById('login-email').value='student@srikakatiya.local'; document.getElementById('login-password').value='School@321'; document.querySelector('.role-btn[data-role=student]').click();" style="border-left: 3px solid var(--portal-success);">
-            <div><span class="demo-role" style="color:var(--portal-success);">Student</span> <span style="font-weight:600;">(K. Sai Kiran)</span></div>
-            <span class="demo-credentials">student@srikakatiya.local / School@321</span>
-          </div>
-          <div class="demo-row" onclick="document.getElementById('login-email').value='preethi@srikakatiya.local'; document.getElementById('login-password').value='School@321'; document.querySelector('.role-btn[data-role=student]').click();" style="border-left: 3px solid var(--portal-success);">
-            <div><span class="demo-role" style="color:var(--portal-success);">Student</span> <span style="font-weight:600;">(M. Preethi)</span></div>
-            <span class="demo-credentials">preethi@srikakatiya.local / School@321</span>
-          </div>
+        <div class="demo-grid" id="dynamic-demo-grid">
+          <!-- Dynamically populated by JavaScript below to ensure sync with db.js -->
         </div>
       </div>
     </div>
@@ -206,10 +175,10 @@
 
   <!-- DB & Auth APIs -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/supabase-config.js"></script>
-  <script src="assets/js/db.js?v=2"></script>
-  <script src="assets/js/auth.js?v=2"></script>
-  <script src="assets/js/migrate_data_to_supabase.js?v=2"></script>
+  <script src="assets/js/supabase-config.js??v=1782309584023"></script>
+  <script src="assets/js/db.js??v=1782309584023"></script>
+  <script src="assets/js/auth.js??v=1782309584023"></script>
+  <script src="assets/js/migrate_data_to_supabase.js??v=1782309584023"></script>
 
   <!-- Login page dynamic logic -->
   <script>
@@ -229,6 +198,39 @@
           };
           window.location.href = ROUTE_CONFIG[user.role];
         }
+      }
+
+      // Populate Quick Login Dynamic Grid
+      const dynamicGrid = document.getElementById('dynamic-demo-grid');
+      if (dynamicGrid && window.skhs_db) {
+        const users = window.skhs_db.getCollection('users');
+        const roles = ['admin', 'teacher', 'parent', 'student'];
+        const roleColors = { admin: 'var(--portal-warning)', teacher: 'var(--portal-info)', parent: '#8b5cf6', student: 'var(--portal-success)' };
+        const demoPasswords = { admin: 'School@123', teacher: 'School@456', parent: 'School@789', student: 'School@321' };
+        
+        roles.forEach(role => {
+          // Find first two users of this role
+          const roleUsers = users.filter(u => u.role === role).slice(0, 2);
+          roleUsers.forEach(u => {
+            const row = document.createElement('div');
+            row.className = 'demo-row';
+            row.style.borderLeft = `3px solid ${roleColors[role]}`;
+            // If they changed the db password hashes, they should use those passwords. 
+            // We assume they kept the default demo passwords for the test accounts, or they know the passwords.
+            const p = demoPasswords[role];
+            row.onclick = () => {
+              document.getElementById('login-email').value = u.email;
+              document.getElementById('login-password').value = p;
+              const btn = document.querySelector(`.role-btn[data-role="${role}"]`);
+              if (btn) btn.click();
+            };
+            row.innerHTML = `
+              <div><span class="demo-role" style="color:${roleColors[role]}; text-transform: capitalize;">${role}</span> <span style="font-weight:600;">(${u.fullName})</span></div>
+              <span class="demo-credentials">${u.email} / ${p}</span>
+            `;
+            dynamicGrid.appendChild(row);
+          });
+        });
       }
 
       // Theme toggle initialization
@@ -347,7 +349,7 @@
           if (res.success) {
             showAlert("Login successful! Redirecting...", "success");
             setTimeout(() => {
-              window.location.href = res.redirect;
+              window.location.href = res.redirect + "?refresh=" + Date.now();
             }, 1000);
           } else {
             showAlert(res.message, "error");

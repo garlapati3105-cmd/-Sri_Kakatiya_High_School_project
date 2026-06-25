@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Parent Portal – Sri Kakatiya High School</title>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- Style Links -->
   <link rel="stylesheet" href="assets/css/portal.css">
 </head>
+
 <body class="portal-body">
 
   <div class="shell-wrapper">
-    
+
     <!-- SIDEBAR -->
     <aside class="portal-sidebar" id="sidebar">
       <div class="sidebar-header">
@@ -28,13 +32,83 @@
 
       <ul class="sidebar-menu">
         <li class="sidebar-item">
-          <a class="sidebar-link active" data-tab="profile">
-            <span>👤</span> <span class="menu-text">My Profile</span>
+          <a class="sidebar-link active" data-tab="dashboard">
+            <span>🏠</span> <span class="menu-text">Dashboard Home</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="profile">
+            <span>👤</span> <span class="menu-text">Child Profile</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="attendance">
+            <span>📅</span> <span class="menu-text">Attendance</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="academics">
+            <span>📚</span> <span class="menu-text">Academics & Results</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="homework">
+            <span>✍️</span> <span class="menu-text">Homework</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="study-materials">
+            <span>📁</span> <span class="menu-text">Study Materials</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="timetable">
+            <span>🕒</span> <span class="menu-text">Timetable</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="fees">
+            <span>💰</span> <span class="menu-text">Fee Information</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="leaves">
+            <span>✉️</span> <span class="menu-text">Leave Requests</span>
           </a>
         </li>
         <li class="sidebar-item">
           <a class="sidebar-link" data-tab="notifications">
             <span>🔔</span> <span class="menu-text">Notifications</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="calendar">
+            <span>🗓️</span> <span class="menu-text">School Calendar</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="ptm">
+            <span>🤝</span> <span class="menu-text">Parent-Teacher Meeting</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="teachers">
+            <span>📖</span> <span class="menu-text">Teacher Directory</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="achievements">
+            <span>🏆</span> <span class="menu-text">Achievements</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="communication">
+            <span>💬</span> <span class="menu-text">Contact School</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" data-tab="settings">
+            <span>⚙️</span> <span class="menu-text">Settings</span>
           </a>
         </li>
       </ul>
@@ -48,14 +122,24 @@
 
     <!-- MAIN WRAPPER -->
     <main class="portal-main">
-      
+
       <!-- TOP NAV HEADER -->
       <header class="portal-header">
-        <div class="header-title" id="page-title-label">Parent Profile</div>
-        
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
+          <button id="mobile-menu-toggle" class="menu-mobile-toggle" aria-label="Toggle menu"
+            style="display: none; background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--portal-text-main);">☰</button>
+          <div class="header-title" id="page-title-label">Dashboard Home</div>
+        </div>
+
         <div class="header-actions">
+          <!-- Multi-Child Selector -->
+          <div style="display: flex; align-items: center; gap: 0.5rem;" id="child-selector-container">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--portal-text-muted);">Active Child:</span>
+            <select id="parent-child-selector" class="form-input" style="max-width: 180px; padding: 0.4rem 0.75rem; font-size: 0.85rem;"></select>
+          </div>
+
           <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">☀️</button>
-          
+
           <div class="user-profile-widget" id="header-user-widget">
             <img src="" alt="Profile Photo" class="widget-photo" id="header-avatar">
             <div>
@@ -68,129 +152,606 @@
 
       <!-- PAGE CONTENT AREA -->
       <div class="portal-content">
-        
+
         <!-- Alert Box -->
         <div id="dashboard-alert-container"></div>
+        <div id="attendance-risk-banner" style="display: none; margin-bottom: 1.5rem;"></div>
 
-        <!-- 1. PROFILE SECTION -->
-        <section id="tab-profile" class="tab-view">
-          <div class="dashboard-title-group" style="margin-bottom: 2rem;">
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem;">Account Profile</h2>
-            <p style="color: var(--portal-text-muted); font-size: 0.9rem;">View completion details and configure personal preferences.</p>
+        <!-- 1. DASHBOARD HOME -->
+        <section id="tab-dashboard" class="tab-view">
+          
+          <!-- Child Overview Card -->
+          <div class="portal-card" id="child-overview-card"
+            style="background: linear-gradient(135deg, rgba(10, 45, 110, 0.95) 0%, rgba(26, 79, 168, 0.9) 100%); color: white; padding: 2rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; border: none; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+              <img src="" alt="Child avatar" id="dash-overview-avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.8); background: rgba(255, 255, 255, 0.1);">
+              <div>
+                <h2 id="dash-overview-name" style="font-family: 'Playfair Display', serif; font-size: 1.75rem; margin-bottom: 0.25rem;">Student Name</h2>
+                <div style="font-size: 0.9rem; opacity: 0.9;" id="dash-overview-class">Class --</div>
+              </div>
+            </div>
+            <div class="portal-grid portal-grid-3" style="margin-bottom: 0; min-width: 320px; flex: 1;">
+              <div style="text-align: center; border-right: 1px solid rgba(255, 255, 255, 0.2);"><span style="opacity: 0.75; font-size: 0.75rem; display: block;">Attendance</span> <strong id="dash-overview-att" style="font-size: 1.25rem;">--%</strong></div>
+              <div style="text-align: center; border-right: 1px solid rgba(255, 255, 255, 0.2);"><span style="opacity: 0.75; font-size: 0.75rem; display: block;">Overall Grade</span> <strong id="dash-overview-grade" style="font-size: 1.25rem;">--</strong></div>
+              <div style="text-align: center;"><span style="opacity: 0.75; font-size: 0.75rem; display: block;">Fee Status</span> <strong id="dash-overview-fees" style="font-size: 1.15rem;">--</strong></div>
+            </div>
           </div>
 
-          <!-- Profile Completion Tracking Gauge -->
-          <div class="completion-container">
-            <div class="completion-gauge-wrap">
-              <svg width="70" height="70">
-                <circle class="circle-bg" cx="35" cy="35" r="31"></circle>
-                <circle class="circle-progress" id="profile-gauge-circle" cx="35" cy="35" r="31"></circle>
-              </svg>
-              <div class="completion-percent" id="profile-gauge-text">0%</div>
+          <!-- Quick Actions -->
+          <div class="portal-card" style="margin-bottom: 1.5rem;">
+            <h3 class="card-title">🚀 Quick Actions</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
+              <button class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none;" onclick="switchTab('attendance')">📅 View Attendance</button>
+              <button class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none;" onclick="switchTab('academics')">📚 View Results</button>
+              <button class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none;" onclick="switchTab('leaves')">✉️ Apply Leave</button>
+              <button class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none;" onclick="switchTab('communication')">💬 Contact school</button>
+              <button class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none;" onclick="switchTab('fees')">💰 View Fees</button>
+              <button class="btn-portal" style="background: var(--portal-bg); color: var(--portal-text-main); border: 1px solid var(--portal-border); box-shadow: none;" onclick="switchTab('study-materials')">📁 Syllabus Files</button>
             </div>
-            
-            <div class="completion-details">
-              <h4 class="completion-heading">Profile Completion Tracker</h4>
-              <p class="completion-text" id="profile-gauge-desc">Complete your profile setup by finishing all requirements.</p>
-              
-              <div class="checklist-grid">
-                <div class="checklist-item" id="check-photo">
-                  <span class="status-icon">❌</span> Profile Photo Uploaded (25%)
+          </div>
+
+          <!-- Academic Health Card & Upcoming Actions Row -->
+          <div class="portal-grid portal-grid-2" style="margin-bottom: 1.5rem;">
+            <!-- Academic Health Card -->
+            <div class="portal-card">
+              <h3 class="card-title">❤️ Academic Health Card</h3>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center; margin-bottom: 1.25rem;">
+                <div style="border-right: 1px solid var(--portal-border);">
+                  <div style="font-size: 1.5rem; font-weight: 800; color: var(--portal-success);" id="health-attendance">--%</div>
+                  <div style="font-size: 0.75rem; color: var(--portal-text-muted);">Attendance</div>
                 </div>
-                <div class="checklist-item" id="check-contact">
-                  <span class="status-icon">❌</span> Mobile Number Saved (25%)
+                <div style="border-right: 1px solid var(--portal-border);">
+                  <div style="font-size: 1.5rem; font-weight: 800; color: var(--portal-info);" id="health-homework">--%</div>
+                  <div style="font-size: 0.75rem; color: var(--portal-text-muted);">Homework Rate</div>
                 </div>
-                <div class="checklist-item" id="check-password">
-                  <span class="status-icon">❌</span> Password Updated (25%)
+                <div>
+                  <div style="font-size: 1.5rem; font-weight: 800; color: var(--portal-accent-dark);" id="health-marks">--%</div>
+                  <div style="font-size: 0.75rem; color: var(--portal-text-muted);">Avg Score</div>
                 </div>
-                <div class="checklist-item" id="check-active">
-                  <span class="status-icon">❌</span> Email Activated (25%)
-                </div>
+              </div>
+              <div style="background: var(--portal-bg); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem;" id="health-remark-box">
+                <strong>Teacher Remark:</strong> <span id="health-remark-text">Loading evaluations...</span>
+              </div>
+            </div>
+
+            <!-- Upcoming Actions Widget -->
+            <div class="portal-card">
+              <h3 class="card-title">🔔 Upcoming Actions</h3>
+              <div id="dash-upcoming-actions" style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                <!-- Dynamically populated checklist -->
               </div>
             </div>
           </div>
 
+          <!-- Secondary Grid -->
           <div class="portal-grid portal-grid-main-side">
-            <!-- Details editor -->
-            <div class="portal-card">
-              <h3 class="card-title">Personal Settings</h3>
-              
-              <form id="profile-details-form">
-                <div class="form-group">
-                  <label class="form-label" for="profile-name">Full Name</label>
-                  <div class="input-wrapper">
-                    <input type="text" id="profile-name" class="form-input" required>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="profile-email">Login Email (Read-only)</label>
-                  <div class="input-wrapper">
-                    <input type="email" id="profile-email" class="form-input" readonly style="opacity: 0.65; cursor: not-allowed;">
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="profile-phone">Mobile Number</label>
-                  <div class="input-wrapper">
-                    <input type="tel" id="profile-phone" class="form-input" required>
-                  </div>
-                </div>
-
-                <button type="submit" class="btn-portal" id="save-profile-btn" style="max-width: 200px;">Save Profile</button>
-              </form>
-            </div>
-
-            <!-- Profile Photo Upload -->
+            <!-- Timetable & Results -->
             <div style="display: flex; flex-direction: column; gap: 1.5rem;">
               <div class="portal-card">
-                <h3 class="card-title">Profile Image</h3>
-                <div class="profile-photo-uploader">
-                  <img src="" alt="Avatar" class="profile-avatar-large" id="profile-avatar-preview">
-                  <label class="upload-btn-label">
-                    <span>Choose Photo File</span>
-                    <input type="file" id="photo-file-input" class="hidden-file-input" accept="image/*">
-                  </label>
-                  <p style="font-size: 0.75rem; color: var(--portal-text-muted);">Supports PNG, JPG (Max 1MB). Image is stored locally.</p>
+                <h3 class="card-title">🕒 Today's Timetable</h3>
+                <div class="table-responsive">
+                  <table class="portal-table">
+                    <thead>
+                      <tr>
+                        <th>Period</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                        <th>Teacher</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-timetable-body">
+                      <tr>
+                        <td colspan="4" style="text-align: center; color: var(--portal-text-muted);">Loading timetable...</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
+            </div>
 
-              <!-- Security Password Update -->
-              <div class="portal-card">
-                <h3 class="card-title">Security & Credentials</h3>
-                <form id="profile-password-form">
-                  <div class="form-group">
-                    <label class="form-label" for="pwd-old">Current Password</label>
-                    <div class="input-wrapper">
-                      <input type="password" id="pwd-old" class="form-input" placeholder="••••••••" required>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label class="form-label" for="pwd-new">New Password</label>
-                    <div class="input-wrapper">
-                      <input type="password" id="pwd-new" class="form-input" placeholder="Min 8 characters" required>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="btn-portal" id="change-pwd-btn" style="background: linear-gradient(135deg, var(--portal-accent-dark) 0%, var(--portal-accent) 100%);">Update Password</button>
-                </form>
+            <!-- Notifications -->
+            <div class="portal-card">
+              <h3 class="card-title">🔔 Recent Announcements</h3>
+              <div id="dash-notifications-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <p style="text-align: center; color: var(--portal-text-muted);">Loading circulars...</p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- 2. NOTIFICATIONS SECTION -->
-        <section id="tab-notifications" class="tab-view" style="display: none;">
+        <!-- 2. CHILD PROFILE -->
+        <section id="tab-profile" class="tab-view" style="display: none;">
           <div class="dashboard-title-group" style="margin-bottom: 2rem;">
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem;">Circulars & Announcements</h2>
-            <p style="color: var(--portal-text-muted); font-size: 0.9rem;">View recent school broadcast alerts and important circular notifications.</p>
+            <h2>Child Profile Details (Read-only)</h2>
+            <p style="color: var(--portal-text-muted); font-size: 0.9rem;">Official student database details. Changes are managed exclusively by the registrar.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <div class="portal-card">
+              <h3 class="card-title">👤 Academic & Personal Details</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;" id="profile-child-grid">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
+            <div class="portal-card" style="text-align: center;">
+              <h3 class="card-title" style="justify-content: center;">Student Image</h3>
+              <img src="" alt="Child avatar" class="profile-avatar-large" id="profile-child-avatar" style="margin-top: 1rem;">
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. ATTENDANCE -->
+        <section id="tab-attendance" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Attendance Monitoring</h2>
+            <p>Track monthly metrics and review daily history logs.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+              <div class="portal-grid portal-grid-3" style="margin-bottom: 0;">
+                <div class="portal-card" style="text-align: center;">
+                  <div style="font-size: 2.25rem; font-weight: 800; color: var(--portal-success);" id="att-present-days">--</div>
+                  <div style="font-size: 0.8rem; color: var(--portal-text-muted);">Present Days</div>
+                </div>
+                <div class="portal-card" style="text-align: center;">
+                  <div style="font-size: 2.25rem; font-weight: 800; color: var(--portal-error);" id="att-absent-days">--</div>
+                  <div style="font-size: 0.8rem; color: var(--portal-text-muted);">Absent Days</div>
+                </div>
+                <div class="portal-card" style="text-align: center;">
+                  <div style="font-size: 2.25rem; font-weight: 800; color: var(--portal-warning);" id="att-total-days">--</div>
+                  <div style="font-size: 0.8rem; color: var(--portal-text-muted);">Total Working Days</div>
+                </div>
+              </div>
+
+              <div class="portal-card">
+                <h3 class="card-title">📈 Attendance Progress Rate</h3>
+                <div style="background: var(--portal-border); height: 16px; border-radius: 8px; overflow: hidden; margin-top: 1rem;">
+                  <div id="att-trend-bar" style="background: var(--portal-success); height: 100%; width: 0%;"></div>
+                </div>
+                <div style="text-align: right; margin-top: 0.5rem; font-weight: 700;" id="att-trend-text">--%</div>
+              </div>
+            </div>
+
+            <div class="portal-card">
+              <h3 class="card-title">📅 History Logs</h3>
+              <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="att-history-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. ACADEMICS & RESULTS -->
+        <section id="tab-academics" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Academic Results</h2>
+            <p>Review term exam scoresheets and teacher evaluations.</p>
+          </div>
+
+          <div class="portal-card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 class="card-title" style="margin-bottom:0;">📚 Term Report Cards</h3>
+              <button class="btn-portal" style="width: auto;" onclick="alert('Downloading report card PDF...')">🖨️ Download Report Card</button>
+            </div>
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Exam Name</th>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Teacher Remarks</th>
+                  </tr>
+                </thead>
+                <tbody id="academics-report-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Academic Performance Summary -->
+          <div class="portal-card">
+            <h3 class="card-title">📈 Overall Progress Rate</h3>
+            <div style="display: flex; align-items: center; justify-content: center; padding: 2rem;">
+              <div style="text-align: center;">
+                <div style="font-size: 3.5rem; font-weight: 800; color: var(--portal-primary-light);" id="acad-avg-pct">--%</div>
+                <div style="font-size: 0.9rem; color: var(--portal-text-muted); margin-top: 0.25rem;">Overall Term Average Score</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. HOMEWORK -->
+        <section id="tab-homework" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Assignments & Homework Tasks</h2>
+            <p>Monitor assigned files, due dates, and completion status.</p>
           </div>
 
           <div class="portal-card">
-            <h3 class="card-title">My Notifications</h3>
+            <div class="erp-toolbar" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+              <input type="text" id="homework-search" class="form-input" placeholder="Search tasks..." style="max-width: 250px;">
+              <select id="homework-subject-select" class="form-input" style="max-width: 200px;">
+                <option value="all">All Subjects</option>
+              </select>
+            </div>
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Subject</th>
+                    <th>Task Title</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="homework-roster-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. STUDY MATERIALS -->
+        <section id="tab-study-materials" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Digital Syllabus Center</h2>
+            <p>Preview and download notes, references, or study sheets.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="erp-toolbar" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+              <input type="text" id="study-search-input" class="form-input" placeholder="Search files by title..." style="max-width: 300px;">
+              <select id="study-subject-select" class="form-input" style="max-width: 200px;">
+                <option value="all">All Subjects</option>
+              </select>
+            </div>
+
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Category</th>
+                    <th>Upload Date</th>
+                    <th>Link</th>
+                  </tr>
+                </thead>
+                <tbody id="materials-roster-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. TIMETABLE -->
+        <section id="tab-timetable" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Weekly Class Timetable</h2>
+            <p>Browse schedule periods.</p>
+          </div>
+
+          <div class="portal-card">
+            <div class="table-responsive">
+              <table class="portal-table" style="text-align: center;">
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Period 1<br><small>08:30 - 09:30</small></th>
+                    <th>Period 2<br><small>09:30 - 10:30</small></th>
+                    <th>Period 3<br><small>10:45 - 11:45</small></th>
+                    <th>Period 4<br><small>11:45 - 12:45</small></th>
+                    <th>Period 5<br><small>01:30 - 02:30</small></th>
+                    <th>Period 6<br><small>02:30 - 03:30</small></th>
+                  </tr>
+                </thead>
+                <tbody id="timetable-grid-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. FEE INFORMATION -->
+        <section id="tab-fees" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Fee Summary & Invoices</h2>
+            <p>Review financial billing invoices. Submissions are managed by administrative staff.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-3" style="margin-bottom: 1.5rem;">
+            <div class="portal-card" style="text-align: center;">
+              <h4 style="color: var(--portal-text-muted); font-size: 0.85rem; margin-bottom: 0.25rem;">Total Fees Due</h4>
+              <strong style="font-size: 1.5rem;" id="fee-total">₹0</strong>
+            </div>
+            <div class="portal-card" style="text-align: center;">
+              <h4 style="color: var(--portal-text-muted); font-size: 0.85rem; margin-bottom: 0.25rem;">Amount Settled</h4>
+              <strong style="font-size: 1.5rem; color: var(--portal-success);" id="fee-paid">₹0</strong>
+            </div>
+            <div class="portal-card" style="text-align: center;">
+              <h4 style="color: var(--portal-text-muted); font-size: 0.85rem; margin-bottom: 0.25rem;">Outstanding Balance</h4>
+              <strong style="font-size: 1.5rem; color: var(--portal-error);" id="fee-pending">₹0</strong>
+            </div>
+          </div>
+
+          <div class="portal-card">
+            <h3 class="card-title">🧾 Fee Billing Invoices</h3>
+            <div class="table-responsive">
+              <table class="portal-table">
+                <thead>
+                  <tr>
+                    <th>Fee Category</th>
+                    <th>Billing Amount</th>
+                    <th>Deadline</th>
+                    <th>State</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="fee-roster-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. LEAVE REQUESTS -->
+        <section id="tab-leaves" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Apply Leave For Child</h2>
+            <p>Submit casual/medical absences on behalf of your student.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Apply form -->
+            <div class="portal-card">
+              <h3 class="card-title">✉️ File Leave Request</h3>
+              <form id="leave-application-form">
+                <div class="portal-grid portal-grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="leave-start-date">Start Date</label>
+                    <input type="date" id="leave-start-date" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="leave-end-date">End Date</label>
+                    <input type="date" id="leave-end-date" class="form-input" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="leave-reason">Reason</label>
+                  <textarea id="leave-reason" class="form-input" style="height: 120px; resize: vertical;" required placeholder="Describe the reason for leave..."></textarea>
+                </div>
+                <button type="submit" class="btn-portal">Submit Application</button>
+              </form>
+            </div>
+
+            <!-- History log -->
+            <div class="portal-card">
+              <h3 class="card-title">📅 Leave History</h3>
+              <div class="table-responsive">
+                <table class="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Dates</th>
+                      <th>Reason</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaves-history-body">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. NOTIFICATIONS -->
+        <section id="tab-notifications" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 2rem;">
+            <h2>School Notice Board</h2>
+            <p style="color: var(--portal-text-muted); font-size: 0.9rem;">View recent school circulars, notifications, and reminders.</p>
+          </div>
+
+          <div class="portal-card">
+            <h3 class="card-title">My Notification Alerts</h3>
             <div class="notifications-feed" id="notifications-feed-list">
               <!-- Loaded dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 11. SCHOOL CALENDAR -->
+        <section id="tab-calendar" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>School Event Calendar</h2>
+            <p>Check schedules for exams, meetings, sports programs, and holidays.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Calendar Grid -->
+            <div class="portal-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 class="card-title" id="calendar-month-label" style="margin-bottom: 0;">Month Year</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn-portal" style="width: auto; padding: 0.35rem 0.75rem;" id="btn-cal-prev">&larr; Prev</button>
+                  <button class="btn-portal" style="width: auto; padding: 0.35rem 0.75rem;" id="btn-cal-next">Next &rarr;</button>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                <div style="color: var(--portal-error);">Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div style="color: var(--portal-error);">Sat</div>
+              </div>
+              <div id="calendar-days-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
+            <!-- Agenda -->
+            <div class="portal-card">
+              <h3 class="card-title">🗓️ Agenda Details</h3>
+              <div id="calendar-agenda-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12. PARENT-TEACHER MEETING -->
+        <section id="tab-ptm" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Parent-Teacher Meetings (PTM)</h2>
+            <p>Schedule or review consultation meeting logs with teachers.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <div class="portal-card">
+              <h3 class="card-title">🤝 Request a Meeting</h3>
+              <form id="ptm-request-form">
+                <div class="form-group">
+                  <label class="form-label" for="ptm-teacher">Select Teacher</label>
+                  <select id="ptm-teacher" class="form-input" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="ptm-date">Preferred Date</label>
+                  <input type="date" id="ptm-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="ptm-notes">Meeting Agenda / Discussion Points</label>
+                  <textarea id="ptm-notes" class="form-input" style="height: 100px; resize: vertical;" required placeholder="Briefly describe what you wish to discuss..."></textarea>
+                </div>
+                <button type="submit" class="btn-portal">Send Request</button>
+              </form>
+            </div>
+
+            <div class="portal-card">
+              <h3 class="card-title">📅 Meeting Roster</h3>
+              <div id="ptm-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 13. TEACHER DIRECTORY -->
+        <section id="tab-teachers" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Teacher Directory</h2>
+            <p>Identify and communicate with your child's assigned subject teachers.</p>
+          </div>
+
+          <div id="teachers-directory-grid" class="portal-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            <!-- Dynamic Teacher Cards -->
+          </div>
+        </section>
+
+        <!-- 14. ACHIEVEMENTS -->
+        <section id="tab-achievements" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Student Achievements</h2>
+            <p>Browse certificates, sports day awards, and academic accomplishments.</p>
+          </div>
+
+          <div id="achievements-grid" class="portal-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            <!-- Dynamic Achievements -->
+          </div>
+        </section>
+
+        <!-- 15. COMMUNICATION (CONTACT SCHOOL) -->
+        <section id="tab-communication" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 1.5rem;">
+            <h2>Contact School</h2>
+            <p>Send ticket-style inquiry requests directly to administration or teachers.</p>
+          </div>
+
+          <div class="portal-grid portal-grid-main-side">
+            <!-- Ticket form -->
+            <div class="portal-card">
+              <h3 class="card-title">💬 Create Simple Query Ticket</h3>
+              <form id="message-form">
+                <div class="form-group">
+                  <label class="form-label" for="msg-recipient">Select Target Recipient</label>
+                  <select id="msg-recipient" class="form-input" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="msg-category">Query Category</label>
+                  <select id="msg-category" class="form-input" required>
+                    <option value="Academic">Academic Inquiry</option>
+                    <option value="Attendance">Attendance Inquiry</option>
+                    <option value="Fees">Fee Inquiry</option>
+                    <option value="General Queries">General Inquiry</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="msg-body">Query Message</label>
+                  <textarea id="msg-body" class="form-input" style="height: 120px; resize: vertical;" required placeholder="Write inquiry message..."></textarea>
+                </div>
+                <button type="submit" class="btn-portal">Submit Ticket</button>
+              </form>
+            </div>
+
+            <!-- Log feed -->
+            <div class="portal-card">
+              <h3 class="card-title">📩 Query Logs & School Replies</h3>
+              <div id="message-history-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 16. SETTINGS -->
+        <section id="tab-settings" class="tab-view" style="display: none;">
+          <div class="dashboard-title-group" style="margin-bottom: 2rem;">
+            <h2>Portal Settings</h2>
+            <p>Configure notifications and theme styles.</p>
+          </div>
+
+          <div class="portal-card" style="max-width: 600px;">
+            <h3 class="card-title">⚙️ Preference Panel</h3>
+            <div class="form-group">
+              <label class="form-label">Theme Mode</label>
+              <select id="settings-theme-select" class="form-input">
+                <option value="light">Light Theme</option>
+                <option value="dark">Dark Theme</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Language Preference</label>
+              <select id="settings-lang-select" class="form-input">
+                <option value="en">English</option>
+                <option value="te">Telugu</option>
+              </select>
+            </div>
+            <button class="btn-portal" id="btn-save-settings" style="max-width: 180px; margin-top: 1rem; margin-bottom: 2rem;">Save Preferences</button>
+
+            <!-- Security policy notice -->
+            <div style="background: rgba(245, 166, 35, 0.08); border: 1px dashed var(--portal-warning); padding: 1.25rem; border-radius: 10px; font-size: 0.85rem; line-height: 1.5; color: var(--portal-text-main);">
+              🔒 <strong>Security Policy Notice:</strong><br>
+              For security reasons, account credentials are managed by the school administration. Please contact the school office if you need assistance.
             </div>
           </div>
         </section>
@@ -206,40 +767,82 @@
   <script src="assets/js/db.js"></script>
   <script src="assets/js/auth.js"></script>
 
-  <!-- Dashboard script -->
+  <!-- Modular Parent Controllers -->
+  <script src="assets/js/parent/dashboard.js"></script>
+  <script src="assets/js/parent/profile.js"></script>
+  <script src="assets/js/parent/attendance.js"></script>
+  <script src="assets/js/parent/academics.js"></script>
+  <script src="assets/js/parent/homework.js"></script>
+  <script src="assets/js/parent/study-materials.js"></script>
+  <script src="assets/js/parent/timetable.js"></script>
+  <script src="assets/js/parent/fees.js"></script>
+  <script src="assets/js/parent/leaves.js"></script>
+  <script src="assets/js/parent/notifications.js"></script>
+  <script src="assets/js/parent/calendar.js"></script>
+  <script src="assets/js/parent/ptm.js"></script>
+  <script src="assets/js/parent/teachers.js"></script>
+  <script src="assets/js/parent/achievements.js"></script>
+  <script src="assets/js/parent/communication.js"></script>
+  <script src="assets/js/parent/settings.js"></script>
+
+  <!-- Shell script bootstrap -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Guard Check
+      // Guard check
       if (!window.skhs_auth.requirePermission('PARENT_VIEWS')) return;
 
-      // Theme toggle initialization
-      const themeToggle = document.getElementById('theme-toggle');
-      const htmlEl = document.documentElement;
-
-      if (localStorage.getItem('portal_theme') === 'dark') {
-        htmlEl.classList.add('dark-theme');
-        themeToggle.textContent = '🌙';
-      } else {
-        htmlEl.classList.remove('dark-theme');
-        themeToggle.textContent = '☀️';
-      }
-
-      themeToggle.addEventListener('click', () => {
-        const isDark = htmlEl.classList.toggle('dark-theme');
-        localStorage.setItem('portal_theme', isDark ? 'dark' : 'light');
-        themeToggle.textContent = isDark ? '🌙' : '☀️';
-      });
-
-      // Sidebar Collapsible
       const sidebar = document.getElementById('sidebar');
       const sidebarToggle = document.getElementById('sidebar-toggle');
-      sidebarToggle.addEventListener('click', () => {
-        const isCollapsed = sidebar.classList.toggle('collapsed');
-        sidebarToggle.textContent = isCollapsed ? '▶' : '◀';
-        sidebarToggle.setAttribute('aria-label', isCollapsed ? 'Expand Menu' : 'Collapse Menu');
-      });
+      if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+          const isCollapsed = sidebar.classList.toggle('collapsed');
+          sidebarToggle.textContent = isCollapsed ? '▶' : '◀';
+          sidebarToggle.setAttribute('aria-label', isCollapsed ? 'Expand Menu' : 'Collapse Menu');
+        });
+      }
 
-      // Sidebar Menu switching
+      // Mobile Menu Toggle
+      const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('active-mobile');
+        });
+      }
+
+      // Sidebar switching
+      window.switchTab = function(tabId) {
+        const sidebarLink = document.querySelector(`.sidebar-link[data-tab="${tabId}"]`);
+        if (sidebarLink) {
+          sidebarLink.click();
+        } else {
+          document.querySelectorAll('.tab-view').forEach(v => v.style.display = 'none');
+          const target = document.getElementById('tab-' + tabId);
+          if (target) target.style.display = 'block';
+          const label = document.getElementById('page-title-label');
+          if (label) {
+            const titleMap = {
+              'dashboard': 'Dashboard Home',
+              'profile': 'Child Profile',
+              'attendance': 'Attendance',
+              'academics': 'Academics & Results',
+              'homework': 'Homework',
+              'study-materials': 'Study Materials',
+              'timetable': 'Timetable',
+              'fees': 'Fee Information',
+              'leaves': 'Leave Requests',
+              'notifications': 'Notifications',
+              'calendar': 'School Calendar',
+              'ptm': 'Parent-Teacher Meetings',
+              'teachers': 'Teacher Directory',
+              'achievements': 'Achievements',
+              'communication': 'Contact School',
+              'settings': 'Settings'
+            };
+            label.textContent = titleMap[tabId] || 'Dashboard';
+          }
+        }
+      };
+
       const menuLinks = document.querySelectorAll('.sidebar-link[data-tab]');
       const tabViews = document.querySelectorAll('.tab-view');
       const pageTitleLabel = document.getElementById('page-title-label');
@@ -248,186 +851,79 @@
         link.addEventListener('click', (e) => {
           e.preventDefault();
           const targetTab = link.getAttribute('data-tab');
-          
+
           menuLinks.forEach(l => l.classList.remove('active'));
           link.classList.add('active');
 
-          tabViews.forEach(v => v.style.display = 'none');
-          document.getElementById('tab-' + targetTab).style.display = 'block';
-
-          // Update header title
-          const titleMap = {
-            'profile': 'Parent Profile',
-            'notifications': 'Circulars & Alerts'
-          };
-          pageTitleLabel.textContent = titleMap[targetTab] || 'Dashboard';
-          
-          if (targetTab === 'notifications') {
-            loadNotifications();
+          if (sidebar) {
+            sidebar.classList.remove('active-mobile');
           }
+
+          tabViews.forEach(v => v.style.display = 'none');
+          const targetSection = document.getElementById('tab-' + targetTab);
+          if (targetSection) targetSection.style.display = 'block';
+
+          const titleMap = {
+            'dashboard': 'Dashboard Home',
+            'profile': 'Child Profile',
+            'attendance': 'Attendance',
+            'academics': 'Academics & Results',
+            'homework': 'Homework',
+            'study-materials': 'Study Materials',
+            'timetable': 'Timetable',
+            'fees': 'Fee Information',
+            'leaves': 'Leave Requests',
+            'notifications': 'Notifications',
+            'calendar': 'School Calendar',
+            'ptm': 'Parent-Teacher Meetings',
+            'teachers': 'Teacher Directory',
+            'achievements': 'Achievements',
+            'communication': 'Contact School',
+            'settings': 'Settings'
+          };
+          if (pageTitleLabel) pageTitleLabel.textContent = titleMap[targetTab] || 'Dashboard';
         });
       });
 
-      // User session load
-      let currentUser = window.skhs_auth.getCurrentUser();
-      
-      function renderUserData() {
-        if (!currentUser) return;
-        
-        // Header widget
+      // User session load & multi-child population
+      const currentUser = window.skhs_auth.getCurrentUser();
+      if (currentUser) {
         document.getElementById('header-fullname').textContent = currentUser.fullName;
-        
-        const avatarSrc = window.skhs_security.isAllowedImageDataUrl(currentUser.profilePhoto)
-          ? currentUser.profilePhoto
-          : 'assets/images/logo.svg';
-        document.getElementById('header-avatar').src = avatarSrc;
-        document.getElementById('profile-avatar-preview').src = avatarSrc;
+        const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFlMTUyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM0NTg1ODgiLz48cGF0aCBkPSJNMzUgMzAgQA==";
+        document.getElementById('header-avatar').src = currentUser.profilePhoto || defaultAvatar;
 
-        // Details Form
-        document.getElementById('profile-name').value = currentUser.fullName || '';
-        document.getElementById('profile-email').value = currentUser.email || '';
-        document.getElementById('profile-phone').value = currentUser.mobileNumber || '';
+        const parent = window.skhs_db.findOne('parents', 'userId', currentUser.userId || currentUser.id);
+        if (parent) {
+          const selector = document.getElementById('parent-child-selector');
+          const linkedStudentIds = Array.isArray(parent.linkedStudents) ? parent.linkedStudents : [];
+          
+          if (selector && linkedStudentIds.length > 0) {
+            selector.innerHTML = '';
+            linkedStudentIds.forEach(id => {
+              const s = window.skhs_db.findOne('students', 'studentId', id);
+              if (s) {
+                const opt = document.createElement('option');
+                opt.value = s.studentId;
+                opt.textContent = s.fullName;
+                selector.appendChild(opt);
+              }
+            });
 
-        // Update Gauge
-        updateProfileGauge();
-      }
+            // Handle switching children
+            selector.addEventListener('change', () => {
+              localStorage.setItem('skhs_parent_active_child', selector.value);
+              window.dispatchEvent(new Event('skhs_parent_child_changed'));
+            });
 
-      function updateProfileGauge() {
-        const percentage = window.skhs_db.calculateCompletion(currentUser);
-        
-        // Gauge visual
-        document.getElementById('profile-gauge-text').textContent = percentage + '%';
-        const circle = document.getElementById('profile-gauge-circle');
-        const circumference = 195;
-        const offset = circumference - (percentage / 100) * circumference;
-        circle.style.strokeDasharray = circumference;
-        circle.style.strokeDashoffset = offset;
-
-        // Checklist states
-        const checkPhoto = document.getElementById('check-photo');
-        const checkContact = document.getElementById('check-contact');
-        const checkPassword = document.getElementById('check-password');
-        const checkActive = document.getElementById('check-active');
-
-        if (currentUser.profilePhoto) {
-          checkPhoto.classList.add('done');
-          checkPhoto.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkPhoto.classList.remove('done');
-          checkPhoto.querySelector('.status-icon').textContent = '❌';
-        }
-
-        if (currentUser.mobileNumber) {
-          checkContact.classList.add('done');
-          checkContact.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkContact.classList.remove('done');
-          checkContact.querySelector('.status-icon').textContent = '❌';
-        }
-
-        if (!currentUser.isDefaultPassword) {
-          checkPassword.classList.add('done');
-          checkPassword.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkPassword.classList.remove('done');
-          checkPassword.querySelector('.status-icon').textContent = '❌';
-        }
-
-        if (currentUser.accountActive) {
-          checkActive.classList.add('done');
-          checkActive.querySelector('.status-icon').textContent = '✅';
-        } else {
-          checkActive.classList.remove('done');
-          checkActive.querySelector('.status-icon').textContent = '❌';
-        }
-
-        const desc = document.getElementById('profile-gauge-desc');
-        if (percentage === 100) {
-          desc.textContent = "Excellent! Your portal profile has been fully secured and verified.";
-        } else {
-          desc.textContent = `Finish the checklist below to complete profile settings (Current: ${percentage}%).`;
-        }
-      }
-
-      // Alert display
-      const alertContainer = document.getElementById('dashboard-alert-container');
-      function showAlert(message, type = 'success') {
-        window.skhs_dom.showAlert(alertContainer, message, type, 4000);
-      }
-
-      // Details update
-      document.getElementById('profile-details-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('profile-name').value.trim();
-        const phone = document.getElementById('profile-phone').value.trim();
-
-        const res = window.skhs_auth.updateProfile(currentUser.userId, name, phone, null);
-        if (res.success) {
-          currentUser = res.user;
-          renderUserData();
-          showAlert("Contact details updated successfully!", "success");
-        } else {
-          showAlert(res.message, "error");
-        }
-      });
-
-      // Photo upload conversion to base64
-      document.getElementById('photo-file-input').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        if (!window.skhs_security.isAllowedImageFile(file)) {
-          showAlert("Choose a PNG, JPG, WebP, or GIF image under 1MB.", "error");
-          e.target.value = '';
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const base64Image = evt.target.result;
-          const res = window.skhs_auth.updateProfile(currentUser.userId, null, null, base64Image);
-          if (res.success) {
-            currentUser = res.user;
-            renderUserData();
-            showAlert("Profile picture updated successfully!", "success");
-          } else {
-            showAlert(res.message, "error");
+            // Set initial selection
+            const saved = localStorage.getItem('skhs_parent_active_child');
+            if (saved && linkedStudentIds.includes(saved)) {
+              selector.value = saved;
+            } else {
+              selector.value = linkedStudentIds[0];
+            }
           }
-        };
-        reader.readAsDataURL(file);
-      });
-
-      // Password modification
-      document.getElementById('profile-password-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const oldP = document.getElementById('pwd-old').value;
-        const newP = document.getElementById('pwd-new').value;
-
-        const res = await window.skhs_auth.changePassword(currentUser.userId, oldP, newP);
-        if (res.success) {
-          currentUser = window.skhs_auth.getCurrentUser();
-          renderUserData();
-          document.getElementById('profile-password-form').reset();
-          showAlert("Account security credentials updated!", "success");
-        } else {
-          showAlert(res.message, "error");
         }
-      });
-
-      // Notifications Feed Renderer
-      function loadNotifications() {
-        const feedList = document.getElementById('notifications-feed-list');
-        const ntfs = window.skhs_db.find('notifications', 'userId', currentUser.userId);
-
-        ntfs.sort((a, b) => b.createdAt - a.createdAt);
-        window.skhs_dom.renderNotifications(feedList, ntfs, markNotificationRead);
-      }
-
-      function markNotificationRead(id) {
-        const notification = window.skhs_db.findOne('notifications', 'notificationId', id);
-        if (!notification || notification.userId !== currentUser.userId) return;
-        window.skhs_db.update('notifications', 'notificationId', id, { isRead: true });
-        loadNotifications();
       }
 
       // Logout trigger
@@ -435,9 +931,31 @@
         window.skhs_auth.logout();
       });
 
-      // Initial page draw
-      renderUserData();
+      // Theme toggle initialization
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlEl = document.documentElement;
+
+      function updateThemeUI() {
+        const isDark = localStorage.getItem('portal_theme') === 'dark';
+        if (isDark) {
+          htmlEl.classList.add('dark-theme');
+          if (themeToggle) themeToggle.textContent = '🌙';
+        } else {
+          htmlEl.classList.remove('dark-theme');
+          if (themeToggle) themeToggle.textContent = '☀️';
+        }
+      }
+      updateThemeUI();
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const isDark = htmlEl.classList.toggle('dark-theme');
+          localStorage.setItem('portal_theme', isDark ? 'dark' : 'light');
+          themeToggle.textContent = isDark ? '🌙' : '☀️';
+        });
+      }
     });
   </script>
 </body>
+
 </html>

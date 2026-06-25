@@ -419,3 +419,20 @@ VALUES
   ('a0e0a9bc-3001-4001-8001-000000000003', 'Madhusudhan Rao', 'parent@srikakatiya.local', 'parent', '9988776655', 'active', TRUE, TRUE),
   ('a0e0a9bc-3001-4001-8001-000000000004', 'K. Sai Kiran', 'student@srikakatiya.local', 'student', '9900112233', 'active', TRUE, TRUE)
 ON CONFLICT (id) DO NOTHING;
+
+-- Create Study Materials Table
+CREATE TABLE IF NOT EXISTS public.study_materials (
+  material_id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  subject_id TEXT REFERENCES public.subjects(subject_id) ON DELETE SET NULL,
+  class_id TEXT REFERENCES public.classes(class_id) ON DELETE SET NULL,
+  file_url TEXT NOT NULL,
+  category TEXT NOT NULL CHECK (category IN ('Notes', 'PDF Materials', 'Assignments', 'Practice Papers', 'Previous Year Papers', 'Video Lectures', 'Reference Materials')),
+  uploaded_by TEXT,
+  upload_date DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+-- Enable RLS on Study Materials
+ALTER TABLE public.study_materials ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow select to authenticated users" ON public.study_materials FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Allow all to teacher/admin on study_materials" ON public.study_materials FOR ALL TO authenticated USING ((SELECT role FROM public.users WHERE id = auth.uid()) IN ('admin', 'teacher'));

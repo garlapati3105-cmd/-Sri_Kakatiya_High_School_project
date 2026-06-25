@@ -345,9 +345,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementById('modal-student-form').addEventListener('submit', (ev) => {
         ev.preventDefault();
+        
+        const fullName = document.getElementById('m-stud-name').value.trim();
+        const studentId = "STD-" + Math.floor(1000 + Math.random() * 9000);
+        const autoEmail = studentId.toLowerCase() + "@srikakatiya.com";
+        const phone = document.getElementById('m-stud-phone').value.trim();
+        
+        // Generate user account for authentication
+        const newUserId = window.skhs_security ? window.skhs_security.createId("USR") : "USR-" + Math.floor(1000 + Math.random() * 9000);
+        const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFlMTUyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM0NTg1ODgiLz48cGF0aCBkPSJNMzUgMzAgUTUwIDE1IDY1IDMwIiBzdHJva2U9IiMyODI4MjgiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==";
+        
+        const userRec = window.skhs_db.insert('users', {
+          userId: newUserId,
+          fullName: fullName,
+          email: autoEmail,
+          passwordHash: "c02dab1a545fed10f3d9a0f2d1fd2cc9ebd1ab7c4860615baa41441627816563", // Default: School@321
+          mobileNumber: phone,
+          role: "student",
+          profilePhoto: defaultAvatar,
+          status: "active",
+          accountActive: true,
+          isDefaultPassword: true,
+          createdDate: new Date().toISOString(),
+          lastLogin: null
+        });
+
         const stdId = window.skhs_db.insert('students', {
-          studentId: "STD-" + Math.floor(1000 + Math.random() * 9000),
-          fullName: document.getElementById('m-stud-name').value.trim(),
+          studentId: studentId,
+          userId: newUserId,
+          fullName: fullName,
           dob: document.getElementById('m-stud-dob').value,
           gender: document.getElementById('m-stud-gender').value,
           classId: document.getElementById('m-stud-class').value,
@@ -355,17 +381,23 @@ document.addEventListener('DOMContentLoaded', () => {
           rollNumber: document.getElementById('m-stud-roll').value,
           parentId: document.getElementById('m-stud-parent').value,
           classTeacherId: document.getElementById('m-stud-teacher').value,
-          phone: document.getElementById('m-stud-phone').value.trim(),
+          phone: phone,
           address: document.getElementById('m-stud-addr').value.trim(),
           admissionDate: document.getElementById('m-stud-admd').value,
           status: document.getElementById('m-stud-status').value
         });
         
-        if (stdId) {
+        if (stdId && userRec) {
           window.skhs_db.logActivity('student_create', 'student', 'info', currentUser.userId, stdId.studentId, `Added new student record: ${stdId.fullName}`);
           closeModal();
           loadStudentsList();
-          showAlert("Student added successfully!");
+          if (typeof showAlert !== 'undefined') {
+            showAlert("Student added! Login Email: " + autoEmail + " (Password: School@321)");
+          } else if (window.skhs_dom && typeof window.skhs_dom.showAlert === 'function') {
+            window.skhs_dom.showAlert(document.getElementById('dashboard-alert-container'), "Student added! Login Email: " + autoEmail + " (Password: School@321)", "success", 0);
+          } else {
+            alert("Student added! Login Email: " + autoEmail + " (Password: School@321)");
+          }
         }
       });
     });
@@ -677,23 +709,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementById('modal-teacher-form').addEventListener('submit', (ev) => {
         ev.preventDefault();
+        
+        const fullName = document.getElementById('m-teach-name').value.trim();
+        const teacherEmail = document.getElementById('m-teach-email').value.trim();
+        const phone = document.getElementById('m-teach-phone').value.trim();
+        
+        // Generate user account for authentication
+        const newUserId = window.skhs_security ? window.skhs_security.createId("USR") : "USR-" + Math.floor(1000 + Math.random() * 9000);
+        const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFlMTUyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM0NTg1ODgiLz48cGF0aCBkPSJNMzUgMzAgUTUwIDE1IDY1IDMwIiBzdHJva2U9IiMyODI4MjgiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==";
+        
+        const userRec = window.skhs_db.insert('users', {
+          userId: newUserId,
+          fullName: fullName,
+          email: teacherEmail,
+          passwordHash: "9a358ed6777d8c0286b4fb7f052b294d11a1fb6886e1586e1e76875377449471", // Default: School@456 for teachers
+          mobileNumber: phone,
+          role: "teacher",
+          profilePhoto: defaultAvatar,
+          status: "active",
+          accountActive: true,
+          isDefaultPassword: true,
+          createdDate: new Date().toISOString(),
+          lastLogin: null
+        });
+
         const tId = window.skhs_db.insert('teachers', {
           teacherId: "TCH-" + Math.floor(2000 + Math.random() * 9000),
-          fullName: document.getElementById('m-teach-name').value.trim(),
+          userId: newUserId,
+          fullName: fullName,
           qualification: document.getElementById('m-teach-qual').value.trim(),
           subject: document.getElementById('m-teach-sub').value.trim(),
           assignedClasses: [],
-          email: document.getElementById('m-teach-email').value.trim(),
-          phone: document.getElementById('m-teach-phone').value.trim(),
+          email: teacherEmail,
+          phone: phone,
           experience: document.getElementById('m-teach-exp').value.trim(),
           status: document.getElementById('m-teach-status').value
         });
 
-        if (tId) {
-          window.skhs_db.logActivity('teacher_create', 'teacher', 'info', currentUser.userId, tId.teacherId, `Registered faculty: ${tId.fullName}`);
+        if (tId && userRec) {
+          window.skhs_db.logActivity('teacher_create', 'teacher', 'info', currentUser.userId, tId.teacherId, `Registered faculty: ${tId.fullName}. Auto-generated login: ${teacherEmail}`);
           closeModal();
           loadTeachersList();
-          showAlert("Faculty registered successfully!");
+          if (typeof showAlert !== 'undefined') {
+            showAlert("Faculty registered! Login Email: " + teacherEmail + " (Password: School@456)");
+          } else if (window.skhs_dom && typeof window.skhs_dom.showAlert === 'function') {
+            window.skhs_dom.showAlert(document.getElementById('dashboard-alert-container'), "Faculty registered! Login Email: " + teacherEmail + " (Password: School@456)", "success", 0);
+          } else {
+            alert("Faculty registered! Login Email: " + teacherEmail + " (Password: School@456)");
+          }
         }
       });
     });
@@ -897,20 +960,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementById('modal-parent-form').addEventListener('submit', (ev) => {
         ev.preventDefault();
+        
+        const fullName = document.getElementById('m-parent-name').value.trim();
+        const parentEmail = document.getElementById('m-parent-email').value.trim();
+        const phone = document.getElementById('m-parent-phone').value.trim();
+        
+        // Generate user account for authentication
+        const newUserId = window.skhs_security ? window.skhs_security.createId("USR") : "USR-" + Math.floor(1000 + Math.random() * 9000);
+        const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFlMTUyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM0NTg1ODgiLz48cGF0aCBkPSJNMzUgMzAgUTUwIDE1IDY1IDMwIiBzdHJva2U9IiMyODI4MjgiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==";
+        
+        const userRec = window.skhs_db.insert('users', {
+          userId: newUserId,
+          fullName: fullName,
+          email: parentEmail,
+          passwordHash: "228cf01b5dbd0e6504a5bf8f0ea37efb32eecbd8700ba5bf44b419eb96ed0947", // Default: School@789 for parents
+          mobileNumber: phone,
+          role: "parent",
+          profilePhoto: defaultAvatar,
+          status: "active",
+          accountActive: true,
+          isDefaultPassword: true,
+          createdDate: new Date().toISOString(),
+          lastLogin: null
+        });
+
         const pId = window.skhs_db.insert('parents', {
           parentId: "PRN-" + Math.floor(3000 + Math.random() * 9000),
-          fullName: document.getElementById('m-parent-name').value.trim(),
-          mobileNumber: document.getElementById('m-parent-phone').value.trim(),
-          email: document.getElementById('m-parent-email').value.trim(),
+          userId: newUserId,
+          fullName: fullName,
+          mobileNumber: phone,
+          email: parentEmail,
           occupation: document.getElementById('m-parent-occ').value.trim(),
           linkedStudents: []
         });
 
-        if (pId) {
-          window.skhs_db.logActivity('parent_create', 'parent', 'info', currentUser.userId, pId.parentId, `Registered parent: ${pId.fullName}`);
+        if (pId && userRec) {
+          window.skhs_db.logActivity('parent_create', 'parent', 'info', currentUser.userId, pId.parentId, `Registered parent: ${pId.fullName}. Auto-generated login: ${parentEmail}`);
           closeModal();
           loadParentsList();
-          showAlert("Parent record added successfully!");
+          if (typeof showAlert !== 'undefined') {
+            showAlert("Parent registered! Login Email: " + parentEmail + " (Password: School@789)");
+          } else if (window.skhs_dom && typeof window.skhs_dom.showAlert === 'function') {
+            window.skhs_dom.showAlert(document.getElementById('dashboard-alert-container'), "Parent registered! Login Email: " + parentEmail + " (Password: School@789)", "success", 0);
+          } else {
+            alert("Parent registered! Login Email: " + parentEmail + " (Password: School@789)");
+          }
         }
       });
     });
@@ -2694,9 +2788,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Header profile widget
     document.getElementById('header-fullname').textContent = currentUser.fullName;
+    const defaultAvatar = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFlMTUyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM0NTg1ODgiLz48cGF0aCBkPSJNMzUgMzAgUTUwIDE1IDY1IDMwIiBzdHJva2U9IiMyODI4MjgiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==";
     const avatarSrc = window.skhs_security.isAllowedImageDataUrl(currentUser.profilePhoto)
       ? currentUser.profilePhoto
-      : 'assets/images/logo.svg';
+      : defaultAvatar;
     document.getElementById('header-avatar').src = avatarSrc;
     document.getElementById('profile-avatar-preview').src = avatarSrc;
 

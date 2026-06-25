@@ -4,9 +4,9 @@
 // ============================================================
 
 const DB_PREFIX = "skhs_db_";
-const DB_VERSION = "7"; // Bump this number to force a full re-seed of localStorage
+const DB_VERSION = "12"; // Bumped to 11 to force cache reset
 const DB_VERSION_KEY = "skhs_db_version";
-const ALLOWED_COLLECTIONS = ['users', 'audit_logs', 'notifications', 'messages', 'students', 'teachers', 'parents', 'classes', 'subjects', 'attendance', 'exams', 'marks', 'homework', 'fees', 'settings', 'academic_years', 'promotions', 'leave_requests', 'calendar_events'];
+const ALLOWED_COLLECTIONS = ['users', 'audit_logs', 'notifications', 'messages', 'students', 'teachers', 'parents', 'classes', 'subjects', 'attendance', 'exams', 'marks', 'homework', 'fees', 'settings', 'academic_years', 'promotions', 'leave_requests', 'calendar_events', 'study_materials'];
 const ALLOWED_NOTIFICATION_TYPES = ['info', 'success', 'warning', 'alert'];
 const ALLOWED_IMAGE_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml'];
 const MAX_PROFILE_PHOTO_BYTES = 1024 * 1024;
@@ -77,14 +77,12 @@ function createRandomString(length = 16) {
   return output;
 }
 
-// Ensure createId is global for other files to access
-window.createId = function(prefix) {
-  return `${prefix}-${createRandomString(12)}`;
-};
-
 function createId(prefix) {
-  return window.createId(prefix);
+  return `${prefix}-${createRandomString(12)}`;
 }
+
+// Ensure createId is global for other files to access
+window.createId = createId;
 
 function createNumericCode(length = 6) {
   const bytes = randomBytes(length);
@@ -138,10 +136,24 @@ const SEED_PASSWORDS = {
 
 // Simple hashing function to simulate SHA-256 in JavaScript
 async function sha256(message) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(message);
-  const hash = await window.crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  // If we are on HTTPS or localhost, we can use the native crypto library
+  if (window.crypto && window.crypto.subtle) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(message);
+    const hash = await window.crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  
+  // Insecure fallback for local network IP testing (e.g., http://192.168.1.x)
+  // Maps standard demo passwords directly to their hashes
+  if (message === 'School@123') return SEED_PASSWORDS.admin;
+  if (message === 'School@456') return SEED_PASSWORDS.teacher;
+  if (message === 'School@789') return SEED_PASSWORDS.parent;
+  if (message === 'School@321') return SEED_PASSWORDS.student;
+  
+  // Otherwise, return the message itself to prevent crashes
+  console.warn("Crypto module unavailable. Falling back to plain-text match.");
+  return message;
 }
 
 // Check and initialize database tables
@@ -167,7 +179,7 @@ function initDatabase() {
       {
         userId: "USR-001",
         fullName: "Swathi Reddy",
-        email: "admin@srikakatiya.local",
+        email: "admin@srikakatiya.com",
         mobileNumber: "9100177682",
         role: "admin",
         password: SEED_PASSWORDS.admin,
@@ -183,11 +195,11 @@ function initDatabase() {
       {
         userId: "USR-002",
         fullName: "K. Raghupathi",
-        email: "teacher@srikakatiya.local",
+        email: "teacher@srikakatiya.com",
         mobileNumber: "9848022338",
         role: "teacher",
         password: SEED_PASSWORDS.teacher,
-        profilePhoto: "",
+        profilePhoto: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzE1M2E1ZiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDEiIHI9IjE4IiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiMyMzYwYTAiLz48cGF0aCBkPSJNMzIgMzUgUTUwIDIwIDY4IDM1IEw2OCA0NSBRNjAgMzIsIDUwIDMyIFE0MCAzMiwgMzIgNDUgWiIgZmlsbD0iIzMyMTkwMCIvPjwvc3ZnPg==",
         status: "active",
         failedLoginAttempts: 0,
         lockUntil: null,
@@ -199,11 +211,11 @@ function initDatabase() {
       {
         userId: "USR-003",
         fullName: "Madhusudhan Rao",
-        email: "parent@srikakatiya.local",
+        email: "parent@srikakatiya.com",
         mobileNumber: "9988776655",
         role: "parent",
         password: SEED_PASSWORDS.parent,
-        profilePhoto: "",
+        profilePhoto: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzNkMTc0MCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjE5IiBmaWxsPSIjZmZlNGMwIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM4ZDMxODMiLz48cGF0aCBkPSJNMjggMzIgUTUwIDE1IDcyIDMyIEw3MCA0NSBRNjMgMjgsIDUwIDI4IFEzNyAyOCwgMzAgNDUgWiIgZmlsbD0iIzIyMTEwMCIvPjwvc3ZnPg==",
         status: "active",
         failedLoginAttempts: 0,
         lockUntil: null,
@@ -215,11 +227,11 @@ function initDatabase() {
       {
         userId: "USR-004",
         fullName: "K. Sai Kiran",
-        email: "student@srikakatiya.local",
+        email: "student@srikakatiya.com",
         mobileNumber: "9900112233",
         role: "student",
         password: SEED_PASSWORDS.student,
-        profilePhoto: "",
+        profilePhoto: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzFlMTUyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkZmJhIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM0NTg1ODgiLz48cGF0aCBkPSJNMzUgMzAgUTUwIDE1IDY1IDMwIiBzdHJva2U9IiMyODI4MjgiIHN0cm9rZS13aWR0aD0iOCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==",
         status: "active",
         failedLoginAttempts: 0,
         lockUntil: null,
@@ -231,11 +243,11 @@ function initDatabase() {
       {
         userId: "USR-005",
         fullName: "Smt. G. Lakshmi",
-        email: "lakshmi.g@srikakatiya.local",
+        email: "lakshmi.g@srikakatiya.com",
         mobileNumber: "9123456780",
         role: "teacher",
         password: SEED_PASSWORDS.teacher,
-        profilePhoto: "",
+        profilePhoto: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzExNDIyZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDEiIHI9IjE4IiBmaWxsPSIjZmZkZGJiIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiMxYTc0NTAiLz48cGF0aCBkPSJNMzIgMzUgUTUwIDIwIDY4IDM1IEw2OCA0NSBRNjAgMzAsIDUwIDMwIFE0MCAzMCwgMzIgNDUgWiIgZmlsbD0iIzFhMTEwMCIvPjwvc3ZnPg==",
         status: "active",
         failedLoginAttempts: 0,
         lockUntil: null,
@@ -251,7 +263,7 @@ function initDatabase() {
         mobileNumber: "9876543210",
         role: "parent",
         password: SEED_PASSWORDS.parent,
-        profilePhoto: "",
+        profilePhoto: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzMzMjIwMCIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZjOTkwIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiM2NjQ0MDAiLz48cGF0aCBkPSJNMzAgMzMgUTUwIDE4IDcwIDMzIEw2OCA0NSBRNC41IDI4IDUwIDI4IFEzNi41IDI4IDMyIDQ1IFoiIGZpbGw9IiMxMTExMTEiLz48L3N2Zz4=",
         status: "active",
         failedLoginAttempts: 0,
         lockUntil: null,
@@ -263,11 +275,11 @@ function initDatabase() {
       {
         userId: "USR-007",
         fullName: "M. Preethi",
-        email: "preethi@srikakatiya.local",
+        email: "preethi@srikakatiya.com",
         mobileNumber: "9876543210",
         role: "student",
         password: SEED_PASSWORDS.student,
-        profilePhoto: "",
+        profilePhoto: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzJkMWI0ZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjZmZkNWMwIi8+PHBhdGggZD0iTTIwIDg1IEMyMCA2NSwgODAgNjUsIDgwIDg1IFoiIGZpbGw9IiNlOTFhOGYiLz48cGF0aCBkPSJNMzAgMjggUTUwIDEwIDcwIDI4IEw3MiA0MCBRNjUgMjUsIDUwIDI1IFEzNSAyNSwgMjggNDAgWiIgZmlsbD0iIzMzMTkwMCIvPjxwYXRoIGQ9Ik03MiA0MCBRNzUgMzIsIDY1IDI4IiBzdHJva2U9IiMzMzE5MDAiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==",
         status: "active",
         failedLoginAttempts: 0,
         lockUntil: null,
@@ -349,7 +361,7 @@ function initDatabase() {
       {
         schoolName: "Sri Kakatiya High School",
         schoolLogo: "",
-        contactInfo: "Ph: +91 9100177682, Email: contact@srikakatiya.local",
+        contactInfo: "Ph: +91 9100177682, Email: contact@srikakatiya.com",
         principalInfo: "Dr. Swathi Reddy",
         passwordPolicy: { minLength: 8, requireNumbers: true },
         sessionTimeout: 30
@@ -362,7 +374,7 @@ function initDatabase() {
   const parents = safeParseArray(localStorage.getItem(getStorageKey('parents')));
   if (parents.length === 0) {
     const seedParents = [
-      { parentId: "PRN-3001", fullName: "Madhusudhan Rao", mobileNumber: "9988776655", email: "parent@srikakatiya.local", occupation: "Business", linkedStudents: ["STD-1001"] },
+      { parentId: "PRN-3001", fullName: "Madhusudhan Rao", mobileNumber: "9988776655", email: "parent@srikakatiya.com", occupation: "Business", linkedStudents: ["STD-1001"] },
       { parentId: "PRN-3002", fullName: "Venkata Ramanappa", mobileNumber: "9876543210", email: "ramanappa@gmail.com", occupation: "Agriculture", linkedStudents: ["STD-1002"] },
       { parentId: "PRN-3003", fullName: "M. Srinivasa Rao", mobileNumber: "9440123456", email: "srinivas@yahoo.com", occupation: "Engineer", linkedStudents: ["STD-1003", "STD-1004"] }
     ];
@@ -373,10 +385,10 @@ function initDatabase() {
   const teachers = safeParseArray(localStorage.getItem(getStorageKey('teachers')));
   if (teachers.length === 0) {
     const seedTeachers = [
-      { teacherId: "TCH-2001", fullName: "K. Raghupathi", qualification: "M.Sc, B.Ed", subject: "Mathematics", assignedClasses: ["class-10", "class-9"], email: "teacher@srikakatiya.local", phone: "9848022338", experience: "12 Years", status: "Active" },
-      { teacherId: "TCH-2002", fullName: "Smt. G. Lakshmi", qualification: "M.A, B.Ed", subject: "English", assignedClasses: ["class-8", "class-7"], email: "lakshmi.g@srikakatiya.local", phone: "9123456780", experience: "8 Years", status: "Active" },
-      { teacherId: "TCH-2003", fullName: "Sri P. Kumar", qualification: "M.Sc (Physics)", subject: "Science", assignedClasses: ["class-10", "class-8"], email: "kumar.p@srikakatiya.local", phone: "9000123456", experience: "10 Years", status: "Active" },
-      { teacherId: "TCH-2004", fullName: "Smt. T. Radha", qualification: "B.A, B.Ed", subject: "Social Studies", assignedClasses: ["class-9", "class-6"], email: "radha.t@srikakatiya.local", phone: "9885566778", experience: "6 Years", status: "Active" }
+      { teacherId: "TCH-2001", fullName: "K. Raghupathi", qualification: "M.Sc, B.Ed", subject: "Mathematics", assignedClasses: ["class-10", "class-9"], email: "teacher@srikakatiya.com", phone: "9848022338", experience: "12 Years", status: "Active" },
+      { teacherId: "TCH-2002", fullName: "Smt. G. Lakshmi", qualification: "M.A, B.Ed", subject: "English", assignedClasses: ["class-8", "class-7"], email: "lakshmi.g@srikakatiya.com", phone: "9123456780", experience: "8 Years", status: "Active" },
+      { teacherId: "TCH-2003", fullName: "Sri P. Kumar", qualification: "M.Sc (Physics)", subject: "Science", assignedClasses: ["class-10", "class-8"], email: "kumar.p@srikakatiya.com", phone: "9000123456", experience: "10 Years", status: "Active" },
+      { teacherId: "TCH-2004", fullName: "Smt. T. Radha", qualification: "B.A, B.Ed", subject: "Social Studies", assignedClasses: ["class-9", "class-6"], email: "radha.t@srikakatiya.com", phone: "9885566778", experience: "6 Years", status: "Active" }
     ];
     localStorage.setItem(getStorageKey('teachers'), JSON.stringify(seedTeachers));
   }
@@ -406,11 +418,11 @@ function initDatabase() {
   const students = safeParseArray(localStorage.getItem(getStorageKey('students')));
   if (students.length === 0) {
     const seedStudents = [
-      { studentId: "STD-1001", fullName: "K. Sai Kiran", dob: "2012-05-15", gender: "Male", classId: "class-10", section: "A", rollNumber: "1", parentId: "PRN-3001", classTeacherId: "TCH-2001", phone: "9900112233", address: "H.No: 12-4-5, Bramhanapalli, Guntur", admissionDate: "2018-06-12", status: "Active" },
-      { studentId: "STD-1002", fullName: "M. Preethi", dob: "2013-09-20", gender: "Female", classId: "class-10", section: "A", rollNumber: "2", parentId: "PRN-3002", classTeacherId: "TCH-2001", phone: "9876543210", address: "Guntur Road, Narasaraopet", admissionDate: "2018-06-14", status: "Active" },
-      { studentId: "STD-1003", fullName: "V. Rajesh", dob: "2013-02-10", gender: "Male", classId: "class-9", section: "B", rollNumber: "1", parentId: "PRN-3003", classTeacherId: "TCH-2004", phone: "9440123456", address: "Brookepeet, Guntur", admissionDate: "2019-06-08", status: "Active" },
-      { studentId: "STD-1004", fullName: "P. Harshitha", dob: "2014-11-22", gender: "Female", classId: "class-9", section: "B", rollNumber: "2", parentId: "PRN-3003", classTeacherId: "TCH-2004", phone: "9440123456", address: "Srinivasa Nagar, Guntur", admissionDate: "2019-06-10", status: "Active" },
-      { studentId: "STD-1005", fullName: "A. Akhil", dob: "2015-07-04", gender: "Male", classId: "class-8", section: "A", rollNumber: "1", parentId: "PRN-3002", classTeacherId: "TCH-2003", phone: "9123456789", address: "Nallapadu, Guntur", admissionDate: "2020-06-15", status: "Active" }
+      { studentId: "STD-1001", userId: "USR-004", fullName: "K. Sai Kiran", dob: "2012-05-15", gender: "Male", classId: "class-10", section: "A", rollNumber: "1", parentId: "PRN-3001", classTeacherId: "TCH-2001", phone: "9900112233", address: "H.No: 12-4-5, Bramhanapalli, Guntur", admissionDate: "2018-06-12", status: "Active" },
+      { studentId: "STD-1002", userId: "USR-007", fullName: "M. Preethi", dob: "2013-09-20", gender: "Female", classId: "class-10", section: "A", rollNumber: "2", parentId: "PRN-3002", classTeacherId: "TCH-2001", phone: "9876543210", address: "Guntur Road, Narasaraopet", admissionDate: "2018-06-14", status: "Active" },
+      { studentId: "STD-1003", userId: "", fullName: "V. Rajesh", dob: "2013-02-10", gender: "Male", classId: "class-9", section: "B", rollNumber: "1", parentId: "PRN-3003", classTeacherId: "TCH-2004", phone: "9440123456", address: "Brookepeet, Guntur", admissionDate: "2019-06-08", status: "Active" },
+      { studentId: "STD-1004", userId: "", fullName: "P. Harshitha", dob: "2014-11-22", gender: "Female", classId: "class-9", section: "B", rollNumber: "2", parentId: "PRN-3003", classTeacherId: "TCH-2004", phone: "9440123456", address: "Srinivasa Nagar, Guntur", admissionDate: "2019-06-10", status: "Active" },
+      { studentId: "STD-1005", userId: "", fullName: "A. Akhil", dob: "2015-07-04", gender: "Male", classId: "class-8", section: "A", rollNumber: "1", parentId: "PRN-3002", classTeacherId: "TCH-2003", phone: "9123456789", address: "Nallapadu, Guntur", admissionDate: "2020-06-15", status: "Active" }
     ];
     localStorage.setItem(getStorageKey('students'), JSON.stringify(seedStudents));
   }
@@ -485,7 +497,7 @@ function initDatabase() {
   if (homework.length === 0) {
     const seedHomework = [
       { homeworkId: "HW-701", classId: "class-10", subjectId: "sub-2", title: "Algebra Assignment", description: "Solve exercises 4.1 to 4.3 in math notebook.", dateAssigned: "2026-06-20", dueDate: "2026-06-25", completedStudents: ["STD-1001"], academicYear: "AY-2026-27" },
-      { homeworkId: "HW-702", classId: "class-10", subjectId: "sub-3", title: "Photosynthesis Diagram", description: "Draw and label the photosynthesis process diagram.", dateAssigned: "2026-06-21", dueDate: "2026-06-24", completedStudents: [], academicYear: "AY-2026-27" }
+      { homeworkId: "HW-702", classId: "class-10", subjectId: "sub-3", title: "Photosynthesis Diagram", description: "Draw and label the photosynthesis process diagram.", dateAssigned: "2026-06-21", dueDate: "2026-06-30", completedStudents: [], academicYear: "AY-2026-27" }
     ];
     localStorage.setItem(getStorageKey('homework'), JSON.stringify(seedHomework));
   }
@@ -526,8 +538,8 @@ function initDatabase() {
   const leaveRequests = safeParseArray(localStorage.getItem(getStorageKey('leave_requests')));
   if (leaveRequests.length === 0) {
     const seedLeaves = [
-      { leaveId: "LV-101", applicantId: "STD-1001", applicantName: "K. Sai Kiran", applicantType: "Student", reason: "Viral fever recovery", startDate: "2026-06-25", endDate: "2026-06-27", status: "Pending" },
-      { leaveId: "LV-102", applicantId: "TCH-2001", applicantName: "K. Raghupathi", applicantType: "Teacher", reason: "Family wedding attendance", startDate: "2026-06-28", endDate: "2026-06-29", status: "Approved" }
+      { leaveId: "LV-101", applicantId: "STD-1001", applicantName: "K. Sai Kiran", applicantType: "Student", reason: "Sick Leave: Viral fever recovery", startDate: "2026-06-25", endDate: "2026-06-27", status: "Pending" },
+      { leaveId: "LV-102", applicantId: "TCH-2001", applicantName: "K. Raghupathi", applicantType: "Teacher", reason: "Family Leave: Family wedding attendance", startDate: "2026-06-28", endDate: "2026-06-29", status: "Approved" }
     ];
     localStorage.setItem(getStorageKey('leave_requests'), JSON.stringify(seedLeaves));
   }
@@ -542,6 +554,17 @@ function initDatabase() {
       { eventId: "EVT-004", title: "Annual Sports Day Meet", category: "Event", startDate: "2026-11-14", endDate: "2026-11-15", description: "Two-day athletic events for school students." }
     ];
     localStorage.setItem(getStorageKey('calendar_events'), JSON.stringify(seedEvents));
+  }
+
+  // 19. Seed study_materials if empty
+  const studyMaterials = safeParseArray(localStorage.getItem(getStorageKey('study_materials')));
+  if (studyMaterials.length === 0) {
+    const seedMaterials = [
+      { materialId: "MAT-901", title: "Algebra Chapter 1 Notes", subjectId: "sub-2", classId: "class-10", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", category: "Notes", uploadedBy: "TCH-2001", uploadDate: "2026-06-20" },
+      { materialId: "MAT-902", title: "Science Term 1 Practice Paper", subjectId: "sub-3", classId: "class-10", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", category: "Practice Papers", uploadedBy: "TCH-2003", uploadDate: "2026-06-21" },
+      { materialId: "MAT-903", title: "English Grammar Rules Handout", subjectId: "sub-1", classId: "class-10", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", category: "Reference Materials", uploadedBy: "TCH-2002", uploadDate: "2026-06-22" }
+    ];
+    localStorage.setItem(getStorageKey('study_materials'), JSON.stringify(seedMaterials));
   }
 }
 
@@ -799,7 +822,7 @@ const db = {
           if (collectionName === 'students') {
             role = 'student';
             defaultPassword = 'School@321';
-            email = email || `${record.studentId.toLowerCase()}@srikakatiya.local`;
+            email = email || `${record.studentId.toLowerCase()}@srikakatiya.com`;
           } else if (collectionName === 'teachers') {
             role = 'teacher';
             defaultPassword = 'School@456';
@@ -1165,3 +1188,5 @@ window.skhs_security = {
 window.skhs_dom = dom;
 window.skhs_db = db;
 window.skhs_sha256 = sha256;
+// Global alias for createId (used in student/leaves.js and other modules)
+window.createId = createId;
