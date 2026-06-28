@@ -267,6 +267,10 @@ ul  { list-style: none; }
   transform: scale(1.05);
   animation: heroZoom 18s ease-in-out infinite alternate;
 }
+.hero-video-bg {
+  transform: none;
+  animation: none;
+}
 @keyframes heroZoom {
   from { transform: scale(1.05); }
   to   { transform: scale(1.12); }
